@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เกมทายคำศัพท์ภาษาอังกฤษ Anagram ป.3</title>
+    <title>เกมทายคำศัพท์ภาษาอังกฤษ Anagram ป.3 (ไม่ซ้ำคำ)</title>
     <style>
         * { box-sizing: border-box; font-family: 'Prompt', sans-serif; }
         body { background-color: #f7f3ff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 15px; }
@@ -15,7 +15,7 @@
         .category-card label { display: block; font-weight: 600; color: #5f27cd; margin-bottom: 8px; font-size: 0.95rem; }
         select { width: 100%; padding: 12px; border-radius: 12px; border: 2px solid #a29bfe; font-size: 1rem; outline: none; background: white; cursor: pointer; color: #6c5ce7; font-weight: 600; }
         
-        .score-board { display: flex; justify-content: space-between; font-size: 1rem; font-weight: bold; margin-bottom: 15px; background: #eeebff; padding: 10px 15px; border-radius: 12px; color: #5f27cd; }
+        .score-board { display: flex; justify-content: space-between; font-size: 0.95rem; font-weight: bold; margin-bottom: 15px; background: #eeebff; padding: 10px 15px; border-radius: 12px; color: #5f27cd; }
         
         .img-container { width: 100%; height: 200px; border-radius: 15px; overflow: hidden; background: #f1f2f6; margin-bottom: 15px; display: flex; justify-content: center; align-items: center; border: 2px solid #dfe4ea; position: relative; }
         .img-container img { width: 100%; height: 100%; object-fit: cover; border-radius: 13px; }
@@ -69,6 +69,7 @@
     <div id="game-screen" style="display: none;">
         <div class="score-board">
             <span>หมวด: <span id="current-cat-name">ทุกหมวด</span></span>
+            <span>เหลือ: <span id="remaining-count">0</span> คำ</span>
             <span>คะแนน: <span id="score">0</span></span>
         </div>
 
@@ -79,7 +80,7 @@
 
         <div class="scrambled-word" id="scrambled-text">...</div>
 
-        <form onsubmit="checkAnswer(event)">
+        <form id="game-form" onsubmit="checkAnswer(event)">
             <input type="text" id="user-input" placeholder="พิมพ์คำตอบภาษาอังกฤษ..." autocomplete="off">
             <button type="submit" class="btn">✓ ส่งคำตอบ</button>
         </form>
@@ -91,7 +92,6 @@
 </div>
 
 <script>
-// ฐานข้อมูลคำศัพท์พร้อมรูปภาพ HD น่ารัก และ Emoji สำรองกันภาพหลุด 100%
 const database = {
     numbers: {
         name: 'Number words (ตัวเลข)',
@@ -197,6 +197,7 @@ const database = {
 
 let currentCategoryKey = 'all';
 let activeWordsObj = {};
+let availableWords = []; // รายการคำที่ยังไม่ได้เล่น
 let currentWord = '';
 let score = 0;
 
@@ -214,8 +215,12 @@ function startGame() {
         document.getElementById('current-cat-name').innerText = database[currentCategoryKey].name;
     }
 
+    // โหลดคำศัพท์ทั้งหมดเข้า Array availableWords
+    availableWords = Object.keys(activeWordsObj);
+
     document.getElementById('selection-screen').style.display = 'none';
     document.getElementById('game-screen').style.display = 'block';
+    document.getElementById('game-form').style.display = 'block';
     
     score = 0;
     document.getElementById('score').innerText = score;
@@ -225,11 +230,6 @@ function startGame() {
 function resetToMenu() {
     document.getElementById('selection-screen').style.display = 'block';
     document.getElementById('game-screen').style.display = 'none';
-}
-
-function getRandomWord() {
-    const keys = Object.keys(activeWordsObj);
-    return keys[Math.floor(Math.random() * keys.length)];
 }
 
 function scrambleWord(word) {
@@ -244,12 +244,28 @@ function scrambleWord(word) {
 }
 
 function loadNewQuestion() {
-    currentWord = getRandomWord();
-    
+    // ถ้าคำศัพท์หมดแล้ว แสดงหน้าชนะเลิศ
+    if (availableWords.length === 0) {
+        document.getElementById('scrambled-text').innerText = "🎉 WINNER!";
+        document.getElementById('word-image').style.display = 'none';
+        document.getElementById('emoji-fallback').style.display = 'block';
+        document.getElementById('emoji-fallback').innerText = "🏆";
+        document.getElementById('feedback-text').className = "feedback correct";
+        document.getElementById('feedback-text').innerText = "เก่งมาก! เล่นครบทุกคำในหมวดนี้แล้วครับ";
+        document.getElementById('game-form').style.display = 'none';
+        document.getElementById('remaining-count').innerText = "0";
+        return;
+    }
+
+    // สุ่มคำจากรายการที่ยังไม่ได้เล่น
+    const randomIndex = Math.floor(Math.random() * availableWords.length);
+    currentWord = availableWords[randomIndex];
+
+    document.getElementById('remaining-count').innerText = availableWords.length;
+
     const imgElement = document.getElementById('word-image');
     const fallbackElement = document.getElementById('emoji-fallback');
     
-    // รีเซ็ตการแสดงผล
     imgElement.style.display = 'block';
     fallbackElement.style.display = 'none';
     
@@ -263,7 +279,6 @@ function loadNewQuestion() {
 }
 
 function handleImageError() {
-    // ถ้าโหลดรูปภาพไม่ขึ้น ให้สลับไปใช้ Emoji สำรองทันที
     document.getElementById('word-image').style.display = 'none';
     document.getElementById('emoji-fallback').style.display = 'block';
 }
@@ -278,6 +293,10 @@ function checkAnswer(e) {
         document.getElementById('score').innerText = score;
         feedback.className = "feedback correct";
         feedback.innerText = "🎉 ถูกต้องเก่งมาก!";
+        
+        // ลบคำที่ตอบถูกแล้วออกจาก availableWords ป้องกันการซ้ำ
+        availableWords = availableWords.filter(word => word !== currentWord);
+
         setTimeout(loadNewQuestion, 1200);
     } else {
         feedback.className = "feedback wrong";
