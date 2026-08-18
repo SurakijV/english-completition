@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เกมทายคำศัพท์ภาษาอังกฤษ Anagram ป.3 (ไม่ซ้ำคำ)</title>
+    <title>เกมทายคำศัพท์ภาษาอังกฤษ Anagram ป.3 (มีปุ่มข้าม)</title>
     <style>
         * { box-sizing: border-box; font-family: 'Prompt', sans-serif; }
         body { background-color: #f7f3ff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 15px; }
@@ -23,19 +23,25 @@
 
         .scrambled-word { font-size: 2.2rem; letter-spacing: 5px; font-weight: 800; color: #ff9f43; margin: 15px 0; background: #fff3e0; padding: 10px; border-radius: 12px; word-break: break-all; }
         
-        input[type="text"] { width: 100%; padding: 12px; font-size: 1.3rem; border-radius: 12px; border: 2px solid #ccc; text-align: center; text-transform: lowercase; margin-bottom: 15px; outline: none; transition: 0.2s; }
+        input[type="text"] { width: 100%; padding: 12px; font-size: 1.3rem; border-radius: 12px; border: 2px solid #ccc; text-align: center; text-transform: lowercase; margin-bottom: 12px; outline: none; transition: 0.2s; }
         input[type="text"]:focus { border-color: #6c5ce7; box-shadow: 0 0 10px rgba(108, 92, 231, 0.2); }
         
-        .btn { width: 100%; padding: 12px; font-size: 1.2rem; font-weight: bold; border: none; border-radius: 12px; cursor: pointer; color: white; background: #6c5ce7; transition: 0.2s; box-shadow: 0 4px 0 #5f27cd; margin-bottom: 8px; }
+        .btn-group { display: flex; gap: 10px; margin-bottom: 10px; }
+        .btn { width: 100%; padding: 12px; font-size: 1.1rem; font-weight: bold; border: none; border-radius: 12px; cursor: pointer; color: white; background: #6c5ce7; transition: 0.2s; box-shadow: 0 4px 0 #5f27cd; }
         .btn:hover { background: #5f27cd; transform: translateY(-1px); }
         .btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #5f27cd; }
         
-        .btn-outline { background: transparent; color: #6c5ce7; border: 2px solid #6c5ce7; box-shadow: none; font-size: 1rem; padding: 8px; }
+        .btn-skip { background: #ff9f43; box-shadow: 0 4px 0 #e67e22; }
+        .btn-skip:hover { background: #e67e22; }
+        .btn-skip:active { box-shadow: 0 1px 0 #e67e22; }
+
+        .btn-outline { background: transparent; color: #6c5ce7; border: 2px solid #6c5ce7; box-shadow: none; font-size: 0.95rem; padding: 8px; margin-top: 5px; }
         .btn-outline:hover { background: #eeebff; transform: none; }
 
-        .feedback { font-size: 1.2rem; font-weight: bold; margin-top: 10px; min-height: 30px; }
+        .feedback { font-size: 1.1rem; font-weight: bold; margin-top: 10px; min-height: 25px; }
         .correct { color: #10ac84; animation: pop 0.5s ease-in-out; }
         .wrong { color: #ee5253; animation: shake 0.4s ease-in-out; }
+        .skipped { color: #ff9f43; }
 
         @keyframes pop { 0% { transform: scale(0.8); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
@@ -82,7 +88,10 @@
 
         <form id="game-form" onsubmit="checkAnswer(event)">
             <input type="text" id="user-input" placeholder="พิมพ์คำตอบภาษาอังกฤษ..." autocomplete="off">
-            <button type="submit" class="btn">✓ ส่งคำตอบ</button>
+            <div class="btn-group">
+                <button type="submit" class="btn">✓ ส่งคำตอบ</button>
+                <button type="button" class="btn btn-skip" onclick="skipQuestion()">⏩ ข้ามไปก่อน</button>
+            </div>
         </form>
 
         <button type="button" class="btn btn-outline" onclick="resetToMenu()">⚙️ เปลี่ยนหมวดหมู่</button>
@@ -197,7 +206,7 @@ const database = {
 
 let currentCategoryKey = 'all';
 let activeWordsObj = {};
-let availableWords = []; // รายการคำที่ยังไม่ได้เล่น
+let availableWords = [];
 let currentWord = '';
 let score = 0;
 
@@ -215,7 +224,6 @@ function startGame() {
         document.getElementById('current-cat-name').innerText = database[currentCategoryKey].name;
     }
 
-    // โหลดคำศัพท์ทั้งหมดเข้า Array availableWords
     availableWords = Object.keys(activeWordsObj);
 
     document.getElementById('selection-screen').style.display = 'none';
@@ -244,7 +252,6 @@ function scrambleWord(word) {
 }
 
 function loadNewQuestion() {
-    // ถ้าคำศัพท์หมดแล้ว แสดงหน้าชนะเลิศ
     if (availableWords.length === 0) {
         document.getElementById('scrambled-text').innerText = "🎉 WINNER!";
         document.getElementById('word-image').style.display = 'none';
@@ -257,9 +264,8 @@ function loadNewQuestion() {
         return;
     }
 
-    // สุ่มคำจากรายการที่ยังไม่ได้เล่น
-    const randomIndex = Math.floor(Math.random() * availableWords.length);
-    currentWord = availableWords[randomIndex];
+    // หยิบคำแรกจากรายการมาเล่น
+    currentWord = availableWords[0];
 
     document.getElementById('remaining-count').innerText = availableWords.length;
 
@@ -294,8 +300,8 @@ function checkAnswer(e) {
         feedback.className = "feedback correct";
         feedback.innerText = "🎉 ถูกต้องเก่งมาก!";
         
-        // ลบคำที่ตอบถูกแล้วออกจาก availableWords ป้องกันการซ้ำ
-        availableWords = availableWords.filter(word => word !== currentWord);
+        // ลบคำที่ตอบถูกแล้วออกจากรายการ
+        availableWords.shift();
 
         setTimeout(loadNewQuestion, 1200);
     } else {
@@ -303,6 +309,25 @@ function checkAnswer(e) {
         feedback.innerText = "❌ ยังไม่ถูก ลองใหม่อีกครั้ง!";
         document.getElementById('user-input').focus();
     }
+}
+
+function skipQuestion() {
+    if (availableWords.length <= 1) {
+        const feedback = document.getElementById('feedback-text');
+        feedback.className = "feedback skipped";
+        feedback.innerText = "💡 เหลือคำสุดท้ายแล้ว สู้ๆ ครับ!";
+        return;
+    }
+
+    // ย้ายคำปัจจุบันไปไว้ท้ายสุดของ Array
+    const skippedWord = availableWords.shift();
+    availableWords.push(skippedWord);
+
+    const feedback = document.getElementById('feedback-text');
+    feedback.className = "feedback skipped";
+    feedback.innerText = "⏩ ข้ามคำนี้ไปก่อน!";
+
+    setTimeout(loadNewQuestion, 600);
 }
 </script>
 
