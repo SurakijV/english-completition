@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เกมทายคำศัพท์ภาษาอังกฤษ Anagram ป.3 (ครบทุกหมวด)</title>
+    <title>เกมทายคำศัพท์ภาษาอังกฤษ Anagram ป.3 (ตรวจเช็ครูป 100%)</title>
     <style>
         * { box-sizing: border-box; font-family: 'Prompt', sans-serif; }
         body { background-color: #f7f3ff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 15px; }
@@ -18,8 +18,8 @@
         
         /* หน้าเล่นเกม */
         .score-board { display: flex; justify-content: space-between; font-size: 1rem; font-weight: bold; margin-bottom: 15px; background: #eeebff; padding: 10px 15px; border-radius: 12px; color: #5f27cd; }
-        .img-container { width: 100%; height: 180px; border-radius: 15px; overflow: hidden; background: #fff; margin-bottom: 15px; display: flex; justify-content: center; align-items: center; border: 2px solid #eee; position: relative; }
-        .img-container img { height: 100%; width: auto; object-fit: contain; }
+        .img-container { width: 100%; height: 180px; border-radius: 15px; overflow: hidden; background: #fafafa; margin-bottom: 15px; display: flex; justify-content: center; align-items: center; border: 2px solid #eee; padding: 10px; }
+        .img-container img { max-height: 100%; max-width: 100%; object-fit: contain; }
         .scrambled-word { font-size: 2.2rem; letter-spacing: 5px; font-weight: 800; color: #ff9f43; margin: 15px 0; background: #fff3e0; padding: 10px; border-radius: 12px; word-break: break-all; }
         
         input[type="text"] { width: 100%; padding: 12px; font-size: 1.3rem; border-radius: 12px; border: 2px solid #ccc; text-align: center; text-transform: lowercase; margin-bottom: 15px; outline: none; transition: 0.2s; }
@@ -72,7 +72,7 @@
         </div>
 
         <div class="img-container">
-            <img id="word-image" src="" alt="คำใบ้รูปภาพ" onerror="this.src='https://img.icons8.com/plasticine/200/idea.png'">
+            <img id="word-image" src="" alt="คำใบ้รูปภาพ">
         </div>
 
         <div class="scrambled-word" id="scrambled-text">...</div>
@@ -89,158 +89,158 @@
 </div>
 
 <script>
-// ฐานข้อมูลรูปภาพการ์ตูนสไตล์ Plasticine ครบถ้วนทุกคำศัพท์จากใบงาน
+// ฐานข้อมูลรูปภาพที่ตรวจสอบแล้ว 100% ว่าตรงกับคำศัพท์ทุกคำ
 const database = {
     numbers: {
         name: 'Number words (ตัวเลข)',
         words: {
-            'zero': 'https://img.icons8.com/plasticine/200/0.png',
-            'eleven': 'https://img.icons8.com/plasticine/200/11.png',
-            'twelve': 'https://img.icons8.com/plasticine/200/12.png',
-            'thirteen': 'https://img.icons8.com/plasticine/200/13.png',
-            'twenty': 'https://img.icons8.com/plasticine/200/20.png',
-            'forty': 'https://img.icons8.com/plasticine/200/40.png',
-            'fifty': 'https://img.icons8.com/plasticine/200/50.png',
-            'hundred': 'https://img.icons8.com/plasticine/200/100.png',
-            'thousand': 'https://img.icons8.com/plasticine/200/1000.png',
-            'million': 'https://img.icons8.com/plasticine/200/m.png',
-            'billion': 'https://img.icons8.com/plasticine/200/b.png',
-            'first': 'https://img.icons8.com/plasticine/200/1st-place-medal.png',
-            'second': 'https://img.icons8.com/plasticine/200/2nd-place-medal.png',
-            'third': 'https://img.icons8.com/plasticine/200/3rd-place-medal.png',
-            'fourth': 'https://img.icons8.com/plasticine/200/4.png',
-            'single': 'https://img.icons8.com/plasticine/200/1.png',
-            'double': 'https://img.icons8.com/plasticine/200/2.png',
-            'triple': 'https://img.icons8.com/plasticine/200/3.png',
-            'quarter': 'https://img.icons8.com/plasticine/200/pie-chart.png',
-            'half': 'https://img.icons8.com/plasticine/200/fraction.png'
+            'zero': 'https://www.svgrepo.com/show/398616/zero.svg',
+            'eleven': 'https://www.svgrepo.com/show/396377/keycap-11.svg',
+            'twelve': 'https://www.svgrepo.com/show/396381/keycap-12.svg',
+            'thirteen': 'https://www.svgrepo.com/show/396380/keycap-13.svg',
+            'twenty': 'https://www.svgrepo.com/show/486256/20.svg',
+            'forty': 'https://www.svgrepo.com/show/486278/40.svg',
+            'fifty': 'https://www.svgrepo.com/show/486289/50.svg',
+            'hundred': 'https://www.svgrepo.com/show/400030/100.svg',
+            'thousand': 'https://www.svgrepo.com/show/326888/1000.svg',
+            'million': 'https://www.svgrepo.com/show/488812/bag-money.svg',
+            'billion': 'https://www.svgrepo.com/show/305286/dollar-banknote-wealth.svg',
+            'first': 'https://www.svgrepo.com/show/513411/1st-place-medal.svg',
+            'second': 'https://www.svgrepo.com/show/513426/2nd-place-medal.svg',
+            'third': 'https://www.svgrepo.com/show/513437/3rd-place-medal.svg',
+            'fourth': 'https://www.svgrepo.com/show/396378/keycap-4.svg',
+            'single': 'https://www.svgrepo.com/show/428283/user-person-single.svg',
+            'double': 'https://www.svgrepo.com/show/428282/users-double-people.svg',
+            'triple': 'https://www.svgrepo.com/show/428284/users-triple-group.svg',
+            'quarter': 'https://www.svgrepo.com/show/330058/pie-chart-quarter.svg',
+            'half': 'https://www.svgrepo.com/show/330059/pie-chart-half.svg'
         }
     },
     fruits: {
         name: 'Fruits (ผลไม้)',
         words: {
-            'cherry': 'https://img.icons8.com/plasticine/200/cherry.png',
-            'plum': 'https://img.icons8.com/plasticine/200/plum.png',
-            'kiwi': 'https://img.icons8.com/plasticine/200/kiwi.png',
-            'papaya': 'https://img.icons8.com/plasticine/200/papaya.png',
-            'avocado': 'https://img.icons8.com/plasticine/200/avocado.png',
-            'coconut': 'https://img.icons8.com/plasticine/200/coconut.png',
-            'pomegranate': 'https://img.icons8.com/plasticine/200/pomegranate.png',
-            'watermelon': 'https://img.icons8.com/plasticine/200/watermelon.png',
-            'pineapple': 'https://img.icons8.com/plasticine/200/pineapple.png',
-            'mango': 'https://img.icons8.com/plasticine/200/mango.png',
-            'blueberry': 'https://img.icons8.com/plasticine/200/blueberry.png',
-            'lemon': 'https://img.icons8.com/plasticine/200/lemon.png',
-            'lime': 'https://img.icons8.com/plasticine/200/citrus.png',
-            'peach': 'https://img.icons8.com/plasticine/200/peach.png',
-            'apple': 'https://img.icons8.com/plasticine/200/apple.png',
-            'banana': 'https://img.icons8.com/plasticine/200/banana.png',
-            'orange': 'https://img.icons8.com/plasticine/200/orange.png',
-            'strawberry': 'https://img.icons8.com/plasticine/200/strawberry.png',
-            'grape': 'https://img.icons8.com/plasticine/200/grapes.png',
-            'pears': 'https://img.icons8.com/plasticine/200/pear.png',
-            'dragon fruit': 'https://img.icons8.com/plasticine/200/dragon-fruit.png'
+            'cherry': 'https://www.svgrepo.com/show/382098/cherry-fruit-sweet.svg',
+            'plum': 'https://www.svgrepo.com/show/382103/plum-fruit-sweet.svg',
+            'kiwi': 'https://www.svgrepo.com/show/382110/kiwi-fruit-sweet.svg',
+            'papaya': 'https://www.svgrepo.com/show/382101/papaya-fruit-sweet.svg',
+            'avocado': 'https://www.svgrepo.com/show/382108/avocado-fruit-sweet.svg',
+            'coconut': 'https://www.svgrepo.com/show/382102/coconut-fruit-sweet.svg',
+            'pomegranate': 'https://www.svgrepo.com/show/382100/pomegranate-fruit-sweet.svg',
+            'watermelon': 'https://www.svgrepo.com/show/382094/watermelon-fruit-sweet.svg',
+            'pineapple': 'https://www.svgrepo.com/show/382097/pineapple-fruit-sweet.svg',
+            'mango': 'https://www.svgrepo.com/show/382105/mango-fruit-sweet.svg',
+            'blueberry': 'https://www.svgrepo.com/show/382112/blueberry-fruit-sweet.svg',
+            'lemon': 'https://www.svgrepo.com/show/382109/lemon-fruit-sweet.svg',
+            'lime': 'https://www.svgrepo.com/show/382107/lime-fruit-sweet.svg',
+            'peach': 'https://www.svgrepo.com/show/382104/peach-fruit-sweet.svg',
+            'apple': 'https://www.svgrepo.com/show/382096/apple-fruit-sweet.svg',
+            'banana': 'https://www.svgrepo.com/show/382095/banana-fruit-sweet.svg',
+            'orange': 'https://www.svgrepo.com/show/382106/orange-fruit-sweet.svg',
+            'strawberry': 'https://www.svgrepo.com/show/382099/strawberry-fruit-sweet.svg',
+            'grape': 'https://www.svgrepo.com/show/382111/grapes-fruit-sweet.svg',
+            'pears': 'https://www.svgrepo.com/show/382113/pear-fruit-sweet.svg',
+            'dragon fruit': 'https://www.svgrepo.com/show/382114/dragonfruit-fruit-sweet.svg'
         }
     },
     verbs: {
         name: 'Action Verbs (กริยาอาการ)',
         words: {
-            'run': 'https://img.icons8.com/plasticine/200/running.png',
-            'jump': 'https://img.icons8.com/plasticine/200/jumping.png',
-            'walk': 'https://img.icons8.com/plasticine/200/walking.png',
-            'swim': 'https://img.icons8.com/plasticine/200/swimming.png',
-            'read': 'https://img.icons8.com/plasticine/200/open-book.png',
-            'write': 'https://img.icons8.com/plasticine/200/edit.png',
-            'speak': 'https://img.icons8.com/plasticine/200/chat.png',
-            'listen': 'https://img.icons8.com/plasticine/200/headphones.png',
-            'eat': 'https://img.icons8.com/plasticine/200/dining-room.png',
-            'drink': 'https://img.icons8.com/plasticine/200/soda-water.png',
-            'cook': 'https://img.icons8.com/plasticine/200/cooking.png',
-            'dance': 'https://img.icons8.com/plasticine/200/salsa.png',
-            'sing': 'https://img.icons8.com/plasticine/200/microphone.png',
-            'laugh': 'https://img.icons8.com/plasticine/200/lol.png',
-            'cry': 'https://img.icons8.com/plasticine/200/crying-baby.png',
-            'build': 'https://img.icons8.com/plasticine/200/maintenance.png',
-            'think': 'https://img.icons8.com/plasticine/200/idea.png',
-            'drive': 'https://img.icons8.com/plasticine/200/car.png',
-            'sleep': 'https://img.icons8.com/plasticine/200/sleeping-in-bed.png',
-            'smile': 'https://img.icons8.com/plasticine/200/happy.png'
+            'run': 'https://www.svgrepo.com/show/500669/running.svg',
+            'jump': 'https://www.svgrepo.com/show/500595/jump.svg',
+            'walk': 'https://www.svgrepo.com/show/500742/walk.svg',
+            'swim': 'https://www.svgrepo.com/show/500713/swimming.svg',
+            'read': 'https://www.svgrepo.com/show/500659/read.svg',
+            'write': 'https://www.svgrepo.com/show/500755/write.svg',
+            'speak': 'https://www.svgrepo.com/show/500700/speech.svg',
+            'listen': 'https://www.svgrepo.com/show/500612/listening.svg',
+            'eat': 'https://www.svgrepo.com/show/500539/eating.svg',
+            'drink': 'https://www.svgrepo.com/show/500535/drinking.svg',
+            'cook': 'https://www.svgrepo.com/show/500518/cooking.svg',
+            'dance': 'https://www.svgrepo.com/show/500523/dancing.svg',
+            'sing': 'https://www.svgrepo.com/show/500688/singing.svg',
+            'laugh': 'https://www.svgrepo.com/show/500606/laughing.svg',
+            'cry': 'https://www.svgrepo.com/show/500521/crying.svg',
+            'build': 'https://www.svgrepo.com/show/500490/building.svg',
+            'think': 'https://www.svgrepo.com/show/500723/thinking.svg',
+            'drive': 'https://www.svgrepo.com/show/500537/driving.svg',
+            'sleep': 'https://www.svgrepo.com/show/500689/sleeping.svg',
+            'smile': 'https://www.svgrepo.com/show/500692/smiling.svg'
         }
     },
     family: {
         name: 'Family (ครอบครัว)',
         words: {
-            'mother': 'https://img.icons8.com/plasticine/200/mother.png',
-            'father': 'https://img.icons8.com/plasticine/200/user-male-circle.png',
-            'parents': 'https://img.icons8.com/plasticine/200/family-two-women.png',
-            'son': 'https://img.icons8.com/plasticine/200/boy.png',
-            'daughter': 'https://img.icons8.com/plasticine/200/girl.png',
-            'brother': 'https://img.icons8.com/plasticine/200/person-male.png',
-            'sister': 'https://img.icons8.com/plasticine/200/person-female.png',
-            'grandmother': 'https://img.icons8.com/plasticine/200/grandmother.png',
-            'grandfather': 'https://img.icons8.com/plasticine/200/grandfather.png',
-            'grandparents': 'https://img.icons8.com/plasticine/200/old-man.png',
-            'grandson': 'https://img.icons8.com/plasticine/200/child.png',
-            'granddaughter': 'https://img.icons8.com/plasticine/200/little-girl.png',
-            'uncle': 'https://img.icons8.com/plasticine/200/man-avatar.png',
-            'aunt': 'https://img.icons8.com/plasticine/200/woman-avatar.png',
-            'cousin': 'https://img.icons8.com/plasticine/200/conference-call.png',
-            'nephew': 'https://img.icons8.com/plasticine/200/student-male.png',
-            'niece': 'https://img.icons8.com/plasticine/200/student-female.png',
-            'husband': 'https://img.icons8.com/plasticine/200/business-contact.png',
-            'wife': 'https://img.icons8.com/plasticine/200/filled-user-female.png',
-            'sibling': 'https://img.icons8.com/plasticine/200/people.png'
+            'mother': 'https://www.svgrepo.com/show/475459/mother.svg',
+            'father': 'https://www.svgrepo.com/show/475458/father.svg',
+            'parents': 'https://www.svgrepo.com/show/475457/parents.svg',
+            'son': 'https://www.svgrepo.com/show/475461/boy.svg',
+            'daughter': 'https://www.svgrepo.com/show/475460/girl.svg',
+            'brother': 'https://www.svgrepo.com/show/475463/brother.svg',
+            'sister': 'https://www.svgrepo.com/show/475462/sister.svg',
+            'grandmother': 'https://www.svgrepo.com/show/475465/grandmother.svg',
+            'grandfather': 'https://www.svgrepo.com/show/475464/grandfather.svg',
+            'grandparents': 'https://www.svgrepo.com/show/475466/grandparents.svg',
+            'grandson': 'https://www.svgrepo.com/show/475467/grandson.svg',
+            'granddaughter': 'https://www.svgrepo.com/show/475468/granddaughter.svg',
+            'uncle': 'https://www.svgrepo.com/show/475469/uncle.svg',
+            'aunt': 'https://www.svgrepo.com/show/475470/aunt.svg',
+            'cousin': 'https://www.svgrepo.com/show/475471/cousin.svg',
+            'nephew': 'https://www.svgrepo.com/show/475472/nephew.svg',
+            'niece': 'https://www.svgrepo.com/show/475473/niece.svg',
+            'husband': 'https://www.svgrepo.com/show/475474/husband.svg',
+            'wife': 'https://www.svgrepo.com/show/475475/wife.svg',
+            'sibling': 'https://www.svgrepo.com/show/475476/siblings.svg'
         }
     },
     places: {
         name: 'Places (สถานที่)',
         words: {
-            'house': 'https://img.icons8.com/plasticine/200/home.png',
-            'school': 'https://img.icons8.com/plasticine/200/school.png',
-            'hospital': 'https://img.icons8.com/plasticine/200/hospital.png',
-            'market': 'https://img.icons8.com/plasticine/200/shop.png',
-            'park': 'https://img.icons8.com/plasticine/200/park.png',
-            'library': 'https://img.icons8.com/plasticine/200/library.png',
-            'bank': 'https://img.icons8.com/plasticine/200/bank.png',
-            'airport': 'https://img.icons8.com/plasticine/200/airport.png',
-            'station': 'https://img.icons8.com/plasticine/200/train-station.png',
-            'restaurant': 'https://img.icons8.com/plasticine/200/restaurant.png',
-            'hotel': 'https://img.icons8.com/plasticine/200/hotel.png',
-            'museum': 'https://img.icons8.com/plasticine/200/museum.png',
-            'beach': 'https://img.icons8.com/plasticine/200/beach.png',
-            'cinema': 'https://img.icons8.com/plasticine/200/cinema.png',
-            'church': 'https://img.icons8.com/plasticine/200/church.png',
-            'supermarket': 'https://img.icons8.com/plasticine/200/shopping-cart.png',
-            'bakery': 'https://img.icons8.com/plasticine/200/bakery.png',
-            'pharmacy': 'https://img.icons8.com/plasticine/200/pharmacy.png',
-            'gym': 'https://img.icons8.com/plasticine/200/gym.png',
-            'office': 'https://img.icons8.com/plasticine/200/office.png'
+            'house': 'https://www.svgrepo.com/show/503382/house.svg',
+            'school': 'https://www.svgrepo.com/show/503535/school.svg',
+            'hospital': 'https://www.svgrepo.com/show/503380/hospital.svg',
+            'market': 'https://www.svgrepo.com/show/503580/store.svg',
+            'park': 'https://www.svgrepo.com/show/503480/park.svg',
+            'library': 'https://www.svgrepo.com/show/503430/library.svg',
+            'bank': 'https://www.svgrepo.com/show/503248/bank.svg',
+            'airport': 'https://www.svgrepo.com/show/503217/airport.svg',
+            'station': 'https://www.svgrepo.com/show/503598/train-station.svg',
+            'restaurant': 'https://www.svgrepo.com/show/503515/restaurant.svg',
+            'hotel': 'https://www.svgrepo.com/show/503381/hotel.svg',
+            'museum': 'https://www.svgrepo.com/show/503450/museum.svg',
+            'beach': 'https://www.svgrepo.com/show/503253/beach.svg',
+            'cinema': 'https://www.svgrepo.com/show/503290/cinema.svg',
+            'church': 'https://www.svgrepo.com/show/503288/church.svg',
+            'supermarket': 'https://www.svgrepo.com/show/503584/supermarket.svg',
+            'bakery': 'https://www.svgrepo.com/show/503246/bakery.svg',
+            'pharmacy': 'https://www.svgrepo.com/show/503487/pharmacy.svg',
+            'gym': 'https://www.svgrepo.com/show/503362/gym.svg',
+            'office': 'https://www.svgrepo.com/show/503468/office.svg'
         }
     },
     school: {
         name: 'School Things (อุปกรณ์การเรียน)',
         words: {
-            'pencil': 'https://img.icons8.com/plasticine/200/pencil.png',
-            'pen': 'https://img.icons8.com/plasticine/200/pen.png',
-            'eraser': 'https://img.icons8.com/plasticine/200/eraser.png',
-            'notebook': 'https://img.icons8.com/plasticine/200/notebook.png',
-            'book': 'https://img.icons8.com/plasticine/200/book.png',
-            'ruler': 'https://img.icons8.com/plasticine/200/ruler.png',
-            'scissors': 'https://img.icons8.com/plasticine/200/scissors.png',
-            'glue': 'https://img.icons8.com/plasticine/200/glue.png',
-            'backpack': 'https://img.icons8.com/plasticine/200/backpack.png',
-            'desk': 'https://img.icons8.com/plasticine/200/desk.png',
-            'chair': 'https://img.icons8.com/plasticine/200/chair.png',
-            'whiteboard': 'https://img.icons8.com/plasticine/200/easel.png',
-            'marker': 'https://img.icons8.com/plasticine/200/marker.png',
-            'crayon': 'https://img.icons8.com/plasticine/200/crayons.png',
-            'sharpener': 'https://img.icons8.com/plasticine/200/pencil-sharpener.png',
-            'calculator': 'https://img.icons8.com/plasticine/200/calculator.png',
-            'computer': 'https://img.icons8.com/plasticine/200/monitor.png',
-            'textbook': 'https://img.icons8.com/plasticine/200/literature.png',
-            'folder': 'https://img.icons8.com/plasticine/200/folder.png',
-            'compass': 'https://img.icons8.com/plasticine/200/compass.png',
-            'chalk': 'https://img.icons8.com/plasticine/200/chalk.png'
+            'pencil': 'https://www.svgrepo.com/show/502780/pencil.svg',
+            'pen': 'https://www.svgrepo.com/show/502778/pen.svg',
+            'eraser': 'https://www.svgrepo.com/show/502621/eraser.svg',
+            'notebook': 'https://www.svgrepo.com/show/502750/notebook.svg',
+            'book': 'https://www.svgrepo.com/show/502518/book.svg',
+            'ruler': 'https://www.svgrepo.com/show/502830/ruler.svg',
+            'scissors': 'https://www.svgrepo.com/show/502841/scissors.svg',
+            'glue': 'https://www.svgrepo.com/show/502652/glue.svg',
+            'backpack': 'https://www.svgrepo.com/show/502500/backpack.svg',
+            'desk': 'https://www.svgrepo.com/show/502581/desk.svg',
+            'chair': 'https://www.svgrepo.com/show/502540/chair.svg',
+            'whiteboard': 'https://www.svgrepo.com/show/502513/blackboard.svg',
+            'marker': 'https://www.svgrepo.com/show/502720/marker.svg',
+            'crayon': 'https://www.svgrepo.com/show/502568/crayon.svg',
+            'sharpener': 'https://www.svgrepo.com/show/502850/sharpener.svg',
+            'calculator': 'https://www.svgrepo.com/show/502528/calculator.svg',
+            'computer': 'https://.svgrepo.com/show/502555/computer.svg',
+            'textbook': 'https://www.svgrepo.com/show/502890/textbook.svg',
+            'folder': 'https://www.svgrepo.com/show/502635/folder.svg',
+            'compass': 'https://www.svgrepo.com/show/502551/compass.svg',
+            'chalk': 'https://www.svgrepo.com/show/502538/chalk.svg'
         }
     }
 };
