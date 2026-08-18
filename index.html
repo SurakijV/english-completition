@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เกมทายคำศัพท์ภาษาอังกฤษ Anagram ป.3</title>
+    <title>เกมทายคำศัพท์ภาษาอังกฤษ Anagram ป.3 (ครบทุกหมวด)</title>
     <style>
         * { box-sizing: border-box; font-family: 'Prompt', sans-serif; }
         body { background-color: #f7f3ff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 15px; }
-        .card { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(108, 92, 231, 0.15); width: 100%; max-width: 480px; text-align: center; border: 4px solid #fff; position: relative; }
+        .card { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(108, 92, 231, 0.15); width: 100%; max-width: 500px; text-align: center; border: 4px solid #fff; position: relative; }
         h1 { color: #6c5ce7; margin-top: 0; font-size: 1.8rem; margin-bottom: 5px; }
         .sub-title { color: #a29bfe; font-size: 0.9rem; margin-bottom: 20px; }
         
@@ -18,7 +18,7 @@
         
         /* หน้าเล่นเกม */
         .score-board { display: flex; justify-content: space-between; font-size: 1rem; font-weight: bold; margin-bottom: 15px; background: #eeebff; padding: 10px 15px; border-radius: 12px; color: #5f27cd; }
-        .img-container { width: 100%; height: 180px; border-radius: 15px; overflow: hidden; background: #fff; margin-bottom: 15px; display: flex; justify-content: center; align-items: center; border: 2px solid #eee; }
+        .img-container { width: 100%; height: 180px; border-radius: 15px; overflow: hidden; background: #fff; margin-bottom: 15px; display: flex; justify-content: center; align-items: center; border: 2px solid #eee; position: relative; }
         .img-container img { height: 100%; width: auto; object-fit: contain; }
         .scrambled-word { font-size: 2.2rem; letter-spacing: 5px; font-weight: 800; color: #ff9f43; margin: 15px 0; background: #fff3e0; padding: 10px; border-radius: 12px; word-break: break-all; }
         
@@ -52,16 +52,19 @@
         <div class="category-card">
             <label for="category-select">เลือกหมวดหมู่ที่ต้องการเล่น:</label>
             <select id="category-select">
-                <option value="all">🌟 ทุกหมวดหมู่ (สุ่มรวม)</option>
+                <option value="all">🌟 ทุกหมวดหมู่ (สุ่มรวมทุกคำ)</option>
+                <option value="numbers">🔢 Number words (คำศัพท์ตัวเลข)</option>
                 <option value="fruits">🍎 Fruits (ผลไม้)</option>
-                <option value="school">✏️ School Things (อุปกรณ์การเรียน)</option>
+                <option value="verbs">🏃 Action Verbs (กริยาอาการ)</option>
+                <option value="family">👨‍👩‍👧‍👦 Family (ครอบครัว)</option>
                 <option value="places">🏫 Places (สถานที่)</option>
+                <option value="school">✏️ School Things (อุปกรณ์การเรียน)</option>
             </select>
         </div>
         <button class="btn" onclick="startGame()">🚀 เริ่มเล่นเกมเลย!</button>
     </div>
 
-    <!-- หน้าที่ 2: หน้าเล่นเกม (ซ่อนไว้ก่อนเริ่ม) -->
+    <!-- หน้าที่ 2: หน้าเล่นเกม -->
     <div id="game-screen" style="display: none;">
         <div class="score-board">
             <span>หมวด: <span id="current-cat-name">ทุกหมวด</span></span>
@@ -69,7 +72,7 @@
         </div>
 
         <div class="img-container">
-            <img id="word-image" src="" alt="คำใบ้รูปภาพ">
+            <img id="word-image" src="" alt="คำใบ้รูปภาพ" onerror="this.src='https://img.icons8.com/plasticine/200/idea.png'">
         </div>
 
         <div class="scrambled-word" id="scrambled-text">...</div>
@@ -86,41 +89,158 @@
 </div>
 
 <script>
-// ฐานข้อมูลคำศัพท์แยกตามหมวดหมู่ พร้อมรูปการ์ตูนตรง 100%
+// ฐานข้อมูลรูปภาพการ์ตูนสไตล์ Plasticine ครบถ้วนทุกคำศัพท์จากใบงาน
 const database = {
+    numbers: {
+        name: 'Number words (ตัวเลข)',
+        words: {
+            'zero': 'https://img.icons8.com/plasticine/200/0.png',
+            'eleven': 'https://img.icons8.com/plasticine/200/11.png',
+            'twelve': 'https://img.icons8.com/plasticine/200/12.png',
+            'thirteen': 'https://img.icons8.com/plasticine/200/13.png',
+            'twenty': 'https://img.icons8.com/plasticine/200/20.png',
+            'forty': 'https://img.icons8.com/plasticine/200/40.png',
+            'fifty': 'https://img.icons8.com/plasticine/200/50.png',
+            'hundred': 'https://img.icons8.com/plasticine/200/100.png',
+            'thousand': 'https://img.icons8.com/plasticine/200/1000.png',
+            'million': 'https://img.icons8.com/plasticine/200/m.png',
+            'billion': 'https://img.icons8.com/plasticine/200/b.png',
+            'first': 'https://img.icons8.com/plasticine/200/1st-place-medal.png',
+            'second': 'https://img.icons8.com/plasticine/200/2nd-place-medal.png',
+            'third': 'https://img.icons8.com/plasticine/200/3rd-place-medal.png',
+            'fourth': 'https://img.icons8.com/plasticine/200/4.png',
+            'single': 'https://img.icons8.com/plasticine/200/1.png',
+            'double': 'https://img.icons8.com/plasticine/200/2.png',
+            'triple': 'https://img.icons8.com/plasticine/200/3.png',
+            'quarter': 'https://img.icons8.com/plasticine/200/pie-chart.png',
+            'half': 'https://img.icons8.com/plasticine/200/fraction.png'
+        }
+    },
     fruits: {
         name: 'Fruits (ผลไม้)',
         words: {
+            'cherry': 'https://img.icons8.com/plasticine/200/cherry.png',
+            'plum': 'https://img.icons8.com/plasticine/200/plum.png',
+            'kiwi': 'https://img.icons8.com/plasticine/200/kiwi.png',
+            'papaya': 'https://img.icons8.com/plasticine/200/papaya.png',
+            'avocado': 'https://img.icons8.com/plasticine/200/avocado.png',
+            'coconut': 'https://img.icons8.com/plasticine/200/coconut.png',
+            'pomegranate': 'https://img.icons8.com/plasticine/200/pomegranate.png',
+            'watermelon': 'https://img.icons8.com/plasticine/200/watermelon.png',
+            'pineapple': 'https://img.icons8.com/plasticine/200/pineapple.png',
+            'mango': 'https://img.icons8.com/plasticine/200/mango.png',
+            'blueberry': 'https://img.icons8.com/plasticine/200/blueberry.png',
+            'lemon': 'https://img.icons8.com/plasticine/200/lemon.png',
+            'lime': 'https://img.icons8.com/plasticine/200/citrus.png',
+            'peach': 'https://img.icons8.com/plasticine/200/peach.png',
             'apple': 'https://img.icons8.com/plasticine/200/apple.png',
             'banana': 'https://img.icons8.com/plasticine/200/banana.png',
-            'cherry': 'https://img.icons8.com/plasticine/200/cherry.png',
-            'coconut': 'https://img.icons8.com/plasticine/200/coconut.png',
-            'grape': 'https://img.icons8.com/plasticine/200/grapes.png',
-            'mango': 'https://img.icons8.com/plasticine/200/mango.png',
             'orange': 'https://img.icons8.com/plasticine/200/orange.png',
-            'peach': 'https://img.icons8.com/plasticine/200/peach.png',
-            'pineapple': 'https://img.icons8.com/plasticine/200/pineapple.png',
-            'watermelon': 'https://img.icons8.com/plasticine/200/watermelon.png'
+            'strawberry': 'https://img.icons8.com/plasticine/200/strawberry.png',
+            'grape': 'https://img.icons8.com/plasticine/200/grapes.png',
+            'pears': 'https://img.icons8.com/plasticine/200/pear.png',
+            'dragon fruit': 'https://img.icons8.com/plasticine/200/dragon-fruit.png'
         }
     },
-    school: {
-        name: 'School Things (อุปกรณ์การเรียน)',
+    verbs: {
+        name: 'Action Verbs (กริยาอาการ)',
         words: {
-            'book': 'https://img.icons8.com/plasticine/200/book.png',
-            'eraser': 'https://img.icons8.com/plasticine/200/eraser.png',
-            'pencil': 'https://img.icons8.com/plasticine/200/pencil.png',
-            'pen': 'https://img.icons8.com/plasticine/200/pen.png',
-            'ruler': 'https://img.icons8.com/plasticine/200/ruler.png',
-            'scissors': 'https://img.icons8.com/plasticine/200/scissors.png',
-            'chalk': 'https://img.icons8.com/plasticine/200/chalk.png',
-            'marker': 'https://img.icons8.com/plasticine/200/marker.png'
+            'run': 'https://img.icons8.com/plasticine/200/running.png',
+            'jump': 'https://img.icons8.com/plasticine/200/jumping.png',
+            'walk': 'https://img.icons8.com/plasticine/200/walking.png',
+            'swim': 'https://img.icons8.com/plasticine/200/swimming.png',
+            'read': 'https://img.icons8.com/plasticine/200/open-book.png',
+            'write': 'https://img.icons8.com/plasticine/200/edit.png',
+            'speak': 'https://img.icons8.com/plasticine/200/chat.png',
+            'listen': 'https://img.icons8.com/plasticine/200/headphones.png',
+            'eat': 'https://img.icons8.com/plasticine/200/dining-room.png',
+            'drink': 'https://img.icons8.com/plasticine/200/soda-water.png',
+            'cook': 'https://img.icons8.com/plasticine/200/cooking.png',
+            'dance': 'https://img.icons8.com/plasticine/200/salsa.png',
+            'sing': 'https://img.icons8.com/plasticine/200/microphone.png',
+            'laugh': 'https://img.icons8.com/plasticine/200/lol.png',
+            'cry': 'https://img.icons8.com/plasticine/200/crying-baby.png',
+            'build': 'https://img.icons8.com/plasticine/200/maintenance.png',
+            'think': 'https://img.icons8.com/plasticine/200/idea.png',
+            'drive': 'https://img.icons8.com/plasticine/200/car.png',
+            'sleep': 'https://img.icons8.com/plasticine/200/sleeping-in-bed.png',
+            'smile': 'https://img.icons8.com/plasticine/200/happy.png'
+        }
+    },
+    family: {
+        name: 'Family (ครอบครัว)',
+        words: {
+            'mother': 'https://img.icons8.com/plasticine/200/mother.png',
+            'father': 'https://img.icons8.com/plasticine/200/user-male-circle.png',
+            'parents': 'https://img.icons8.com/plasticine/200/family-two-women.png',
+            'son': 'https://img.icons8.com/plasticine/200/boy.png',
+            'daughter': 'https://img.icons8.com/plasticine/200/girl.png',
+            'brother': 'https://img.icons8.com/plasticine/200/person-male.png',
+            'sister': 'https://img.icons8.com/plasticine/200/person-female.png',
+            'grandmother': 'https://img.icons8.com/plasticine/200/grandmother.png',
+            'grandfather': 'https://img.icons8.com/plasticine/200/grandfather.png',
+            'grandparents': 'https://img.icons8.com/plasticine/200/old-man.png',
+            'grandson': 'https://img.icons8.com/plasticine/200/child.png',
+            'granddaughter': 'https://img.icons8.com/plasticine/200/little-girl.png',
+            'uncle': 'https://img.icons8.com/plasticine/200/man-avatar.png',
+            'aunt': 'https://img.icons8.com/plasticine/200/woman-avatar.png',
+            'cousin': 'https://img.icons8.com/plasticine/200/conference-call.png',
+            'nephew': 'https://img.icons8.com/plasticine/200/student-male.png',
+            'niece': 'https://img.icons8.com/plasticine/200/student-female.png',
+            'husband': 'https://img.icons8.com/plasticine/200/business-contact.png',
+            'wife': 'https://img.icons8.com/plasticine/200/filled-user-female.png',
+            'sibling': 'https://img.icons8.com/plasticine/200/people.png'
         }
     },
     places: {
         name: 'Places (สถานที่)',
         words: {
+            'house': 'https://img.icons8.com/plasticine/200/home.png',
             'school': 'https://img.icons8.com/plasticine/200/school.png',
-            'house': 'https://img.icons8.com/plasticine/200/home.png'
+            'hospital': 'https://img.icons8.com/plasticine/200/hospital.png',
+            'market': 'https://img.icons8.com/plasticine/200/shop.png',
+            'park': 'https://img.icons8.com/plasticine/200/park.png',
+            'library': 'https://img.icons8.com/plasticine/200/library.png',
+            'bank': 'https://img.icons8.com/plasticine/200/bank.png',
+            'airport': 'https://img.icons8.com/plasticine/200/airport.png',
+            'station': 'https://img.icons8.com/plasticine/200/train-station.png',
+            'restaurant': 'https://img.icons8.com/plasticine/200/restaurant.png',
+            'hotel': 'https://img.icons8.com/plasticine/200/hotel.png',
+            'museum': 'https://img.icons8.com/plasticine/200/museum.png',
+            'beach': 'https://img.icons8.com/plasticine/200/beach.png',
+            'cinema': 'https://img.icons8.com/plasticine/200/cinema.png',
+            'church': 'https://img.icons8.com/plasticine/200/church.png',
+            'supermarket': 'https://img.icons8.com/plasticine/200/shopping-cart.png',
+            'bakery': 'https://img.icons8.com/plasticine/200/bakery.png',
+            'pharmacy': 'https://img.icons8.com/plasticine/200/pharmacy.png',
+            'gym': 'https://img.icons8.com/plasticine/200/gym.png',
+            'office': 'https://img.icons8.com/plasticine/200/office.png'
+        }
+    },
+    school: {
+        name: 'School Things (อุปกรณ์การเรียน)',
+        words: {
+            'pencil': 'https://img.icons8.com/plasticine/200/pencil.png',
+            'pen': 'https://img.icons8.com/plasticine/200/pen.png',
+            'eraser': 'https://img.icons8.com/plasticine/200/eraser.png',
+            'notebook': 'https://img.icons8.com/plasticine/200/notebook.png',
+            'book': 'https://img.icons8.com/plasticine/200/book.png',
+            'ruler': 'https://img.icons8.com/plasticine/200/ruler.png',
+            'scissors': 'https://img.icons8.com/plasticine/200/scissors.png',
+            'glue': 'https://img.icons8.com/plasticine/200/glue.png',
+            'backpack': 'https://img.icons8.com/plasticine/200/backpack.png',
+            'desk': 'https://img.icons8.com/plasticine/200/desk.png',
+            'chair': 'https://img.icons8.com/plasticine/200/chair.png',
+            'whiteboard': 'https://img.icons8.com/plasticine/200/easel.png',
+            'marker': 'https://img.icons8.com/plasticine/200/marker.png',
+            'crayon': 'https://img.icons8.com/plasticine/200/crayons.png',
+            'sharpener': 'https://img.icons8.com/plasticine/200/pencil-sharpener.png',
+            'calculator': 'https://img.icons8.com/plasticine/200/calculator.png',
+            'computer': 'https://img.icons8.com/plasticine/200/monitor.png',
+            'textbook': 'https://img.icons8.com/plasticine/200/literature.png',
+            'folder': 'https://img.icons8.com/plasticine/200/folder.png',
+            'compass': 'https://img.icons8.com/plasticine/200/compass.png',
+            'chalk': 'https://img.icons8.com/plasticine/200/chalk.png'
         }
     }
 };
@@ -133,7 +253,6 @@ let score = 0;
 function startGame() {
     currentCategoryKey = document.getElementById('category-select').value;
     
-    // จัดเตรียมชุดคำศัพท์ตามหมวดที่เลือก
     if (currentCategoryKey === 'all') {
         activeWordsObj = {};
         for (let key in database) {
@@ -145,7 +264,6 @@ function startGame() {
         document.getElementById('current-cat-name').innerText = database[currentCategoryKey].name;
     }
 
-    // สลับหน้าจอไปที่หน้าเล่นเกม
     document.getElementById('selection-screen').style.display = 'none';
     document.getElementById('game-screen').style.display = 'block';
     
@@ -165,22 +283,20 @@ function getRandomWord() {
 }
 
 function scrambleWord(word) {
-    let array = word.split('');
+    let raw = word.replace(/\s+/g, '');
+    let array = raw.split('');
     for (let i = array.length - 1; i > 0; i--) {
         let j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
     }
     let scrambled = array.join('');
-    return (scrambled === word) ? scrambleWord(word) : scrambled;
+    return (scrambled === raw && raw.length > 1) ? scrambleWord(word) : scrambled;
 }
 
 function loadNewQuestion() {
     currentWord = getRandomWord();
     
-    // โหลดรูปภาพตรงตามคำศัพท์
     document.getElementById('word-image').src = activeWordsObj[currentWord];
-    
-    // โหลดตัวอักษรสลับ
     document.getElementById('scrambled-text').innerText = scrambleWord(currentWord).toUpperCase();
     
     document.getElementById('user-input').value = '';
@@ -193,7 +309,7 @@ function checkAnswer(e) {
     const userInput = document.getElementById('user-input').value.trim().toLowerCase();
     const feedback = document.getElementById('feedback-text');
 
-    if (userInput === currentWord) {
+    if (userInput === currentWord.toLowerCase()) {
         score += 10;
         document.getElementById('score').innerText = score;
         feedback.className = "feedback correct";
