@@ -8,13 +8,15 @@
         * { box-sizing: border-box; font-family: 'Kanit', sans-serif; }
         body { background-color: #f0f8ff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
         .card { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 500px; text-align: center; }
-        h1 { color: #ff6b6b; margin-top: 0; }
-        .score-board { display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; background: #e0f7fa; padding: 10px 15px; border-radius: 10px; color: #00796b; }
-        select { width: 100%; padding: 10px; border-radius: 10px; border: 2px solid #4dd0e1; font-size: 1rem; margin-bottom: 15px; outline: none; }
-        .img-container { width: 100%; height: 200px; border-radius: 15px; overflow: hidden; background: #eee; margin-bottom: 15px; display: flex; justify-content: center; align-items: center; }
-        .img-container img { width: 100%; height: 100%; object-fit: cover; }
-        .scrambled-word { font-size: 2.2rem; letter-spacing: 8px; font-weight: bold; color: #6c5ce7; margin: 15px 0; background: #f1f0ff; padding: 10px; border-radius: 10px; }
-        input[type="text"] { width: 100%; padding: 12px; font-size: 1.2rem; border-radius: 10px; border: 2px solid #ccc; text-align: center; text-transform: lowercase; margin-bottom: 15px; }
+        h1 { color: #ff6b6b; margin-top: 0; font-size: 1.8rem; }
+        .score-board { display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: bold; margin-bottom: 15px; background: #e0f7fa; padding: 10px 15px; border-radius: 10px; color: #00796b; }
+        select { width: 100%; padding: 10px; border-radius: 10px; border: 2px solid #4dd0e1; font-size: 1rem; margin-bottom: 15px; outline: none; background: white; }
+        .img-container { width: 100%; height: 220px; border-radius: 15px; overflow: hidden; background: #f8f9fa; margin-bottom: 15px; display: flex; justify-content: center; align-items: center; border: 2px dashed #4dd0e1; position: relative; }
+        .img-container img { width: 100%; height: 100%; object-fit: contain; }
+        .loading-text { position: absolute; color: #888; font-size: 0.9rem; z-index: 1; }
+        .scrambled-word { font-size: 2rem; letter-spacing: 6px; font-weight: bold; color: #6c5ce7; margin: 15px 0; background: #f1f0ff; padding: 10px; border-radius: 10px; word-break: break-all; }
+        input[type="text"] { width: 100%; padding: 12px; font-size: 1.2rem; border-radius: 10px; border: 2px solid #ccc; text-align: center; text-transform: lowercase; margin-bottom: 15px; outline: none; }
+        input[type="text"]:focus { border-color: #6c5ce7; }
         .btn { width: 100%; padding: 12px; font-size: 1.2rem; font-weight: bold; border: none; border-radius: 10px; cursor: pointer; color: white; background: #ff7675; transition: 0.2s; }
         .btn:hover { background: #d63031; }
         .feedback { font-size: 1.2rem; font-weight: bold; margin-top: 15px; min-height: 30px; }
@@ -43,7 +45,8 @@
     </select>
 
     <div class="img-container">
-        <img id="word-image" src="" alt="Cartoon representation">
+        <span class="loading-text" id="img-loading">🎨 กำลังโหลดรูปภาพการ์ตูน...</span>
+        <img id="word-image" src="" alt="Cartoon representation" style="display:none;" onload="imageLoaded()" onerror="imageError()">
     </div>
 
     <div class="scrambled-word" id="scrambled-text">LOADING</div>
@@ -57,7 +60,6 @@
 </div>
 
 <script>
-// ข้อมูลคำศัพท์ดึงจากรูปภาพตรงตามเอกสาร
 const vocabularyData = {
     "Number words": ["Zero", "Eleven", "Twelve", "Thirteen", "Twenty", "Forty", "Fifty", "Hundred", "Thousand", "Million", "Billion", "First", "Second", "Third", "Fourth", "Single", "Double", "Triple", "Quarter", "Half"],
     "Fruits": ["Cherry", "Plum", "Kiwi", "Papaya", "Avocado", "Coconut", "Pomegranate", "Watermelon", "Pineapple", "Mango", "Blueberry", "Lemon", "Lime", "Peach", "Apple", "Banana", "Orange", "Strawberry", "Grape", "Pears", "Dragon fruit"],
@@ -85,7 +87,6 @@ function scrambleWord(word) {
         [array[i], array[j]] = [array[j], array[i]];
     }
     let scrambled = array.join('');
-    // ป้องกันกรณีสลับแล้วได้คำเดิม
     return (scrambled === word.toLowerCase() && word.length > 1) ? scrambleWord(word) : scrambled;
 }
 
@@ -95,9 +96,27 @@ function loadNewQuestion() {
     document.getElementById('user-input').value = '';
     document.getElementById('feedback-text').innerText = '';
     
-    // โหลดภาพการ์ตูนประกอบโดยใช้ Unsplash Source API
-    const cleanWord = currentWord.replace(/\s+/g, '');
-    document.getElementById('word-image').src = `https://source.unsplash.com/400x300/?vector,cartoon,${cleanWord}`;
+    // ตั้งค่าหน้าตาตอนกำลังโหลดรูป
+    const imgElement = document.getElementById('word-image');
+    const loadingText = document.getElementById('img-loading');
+    imgElement.style.display = 'none';
+    loadingText.style.display = 'block';
+    loadingText.innerText = '🎨 กำลังโหลดรูปภาพการ์ตูน...';
+
+    // ดึงรูปการ์ตูนน่ารักๆ สำหรับเด็กผ่าน Pollinations AI
+    const prompt = encodeURIComponent(`cute cartoon 3d style illustration of ${currentWord}, vibrant colors for kids, clean light background`);
+    imgElement.src = `https://image.pollinations.ai/prompt/${prompt}?width=400&height=300&nologo=true&seed=${Math.floor(Math.random() * 1000)}`;
+}
+
+function imageLoaded() {
+    document.getElementById('img-loading').style.display = 'none';
+    document.getElementById('word-image').style.display = 'block';
+}
+
+function imageError() {
+    const loadingText = document.getElementById('img-loading');
+    loadingText.style.display = 'block';
+    loadingText.innerText = '🖼️ (รูปภาพสัญลักษณ์: ' + currentWord + ')';
 }
 
 function checkAnswer(e) {
@@ -122,7 +141,7 @@ function changeCategory() {
     loadNewQuestion();
 }
 
-// เริ่มต้นเกมเมื่อโหลดหน้าเว็บ
+// เริ่มต้นเกมเมื่อเปิดหน้าเว็บ
 loadNewQuestion();
 </script>
 
