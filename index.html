@@ -3,14 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kid Anagram Game</title>
+    <title>Kid Anagram Game for Grade 3</title>
     <style>
-        body { font-family: 'Comic Sans MS', cursive, sans-serif; text-align: center; background: #f0f8ff; padding: 20px; }
-        .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        select, button { font-size: 16px; padding: 10px; margin: 10px; border-radius: 8px; border: 1px solid #ccc; }
-        .scrambled { font-size: 32px; letter-spacing: 5px; color: #ff6f61; font-weight: bold; margin: 20px 0; }
-        input { font-size: 20px; padding: 8px; text-align: center; width: 70%; border-radius: 8px; border: 2px solid #4caf50; }
-        #result { margin-top: 15px; font-size: 20px; font-weight: bold; }
+        body { font-family: 'Comic Sans MS', cursive, sans-serif; text-align: center; background: #e0f7fa; padding: 15px; margin: 0; }
+        .container { max-width: 550px; margin: auto; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+        h2 { color: #0288d1; margin-top: 0; }
+        select, button { font-size: 16px; padding: 10px 15px; margin: 8px; border-radius: 12px; border: 2px solid #0288d1; background: white; cursor: pointer; font-weight: bold; }
+        button { background: #4caf50; color: white; border: none; }
+        button:hover { background: #45a049; }
+        .btn-next { background: #ff9800; }
+        .btn-next:hover { background: #f57c00; }
+        
+        /* Container สำหรับแสดงรูปภาพ หรือ Emoji */
+        .img-box { width: 220px; height: 180px; margin: 15px auto; border-radius: 15px; overflow: hidden; border: 4px solid #b2ebf2; display: flex; align-items: center; justify-content: center; background: #f1f8e9; position: relative; }
+        .img-box img { width: 100%; height: 100%; object-fit: cover; }
+        .fallback-emoji { font-size: 90px; line-height: 1; }
+        
+        .scrambled { font-size: 36px; letter-spacing: 6px; color: #e91e63; font-weight: bold; margin: 15px 0; background: #fce4ec; padding: 10px; border-radius: 10px; }
+        input { font-size: 22px; padding: 10px; text-align: center; width: 80%; border-radius: 10px; border: 3px solid #0288d1; outline: none; }
+        #result { margin-top: 15px; font-size: 20px; font-weight: bold; min-height: 30px; }
     </style>
 </head>
 <body>
@@ -27,31 +38,84 @@
         <option value="School Things">School Things (21 คำ)</option>
     </select>
 
+    <!-- ช่องแสดงรูปภาพ Unsplash / Emoji สำรอง -->
+    <div class="img-box" id="img-container">
+        <!-- JS จะสร้าง <img> หรือ Emoji ใส่ในนี้ -->
+    </div>
+
     <div class="scrambled" id="scrambled-word">----</div>
     <input type="text" id="user-input" placeholder="พิมพ์คำตอบภาษาอังกฤษ" autocomplete="off">
     <br>
     <button onclick="checkAnswer()">ตรวจคำตอบ</button>
-    <button onclick="nextQuestion()">คำถัดไป ➡️</button>
+    <button class="btn-next" onclick="nextQuestion()">คำถัดไป ➡️</button>
 
     <div id="result"></div>
 </div>
 
 <script>
-// ชุดข้อมูลคำศัพท์อัปเดตล่าสุด
-const vocabData = {
-    "Number words": ["Zero", "Eleven", "Twelve", "Thirteen", "Twenty", "Forty", "Fifty", "Hundred", "Thousand", "Million", "Billion", "First", "Second", "Third", "Fourth", "Single", "Double", "Triple", "Quarter", "Half"],
-    "Fruits": ["Cherry", "Plum", "Kiwi", "Papaya", "Avocado", "Coconut", "Pomegranate", "Watermelon", "Pineapple", "Mango", "Blueberry", "Lemon", "Lime", "Peach", "Apple", "Banana", "Orange", "Strawberry", "Grape", "Pears", "Dragon fruit"],
-    "Action Verbs": ["Run", "Jump", "Walk", "Swim", "Read", "Write", "Speak", "Listen", "Eat", "Drink", "Cook", "Dance", "Sing", "Laugh", "Cry", "Build", "Think", "Drive", "Sleep", "Smile"],
-    "Family": ["Mother", "Father", "Parents", "Son", "Daughter", "Brother", "Sister", "Grandmother", "Grandfather", "Grandparents", "Grandson", "Granddaughter", "Uncle", "Aunt", "Cousin", "Nephew", "Niece", "Husband", "Wife", "Sibling"],
-    "Places": ["House", "School", "Hospital", "Market", "Park", "Library", "Bank", "Airport", "Station", "Restaurant", "Hotel", "Museum", "Beach", "Cinema", "Church", "Supermarket", "Bakery", "Pharmacy", "Gym", "Office"],
-    "School Things": ["Pencil", "Pen", "Eraser", "Notebook", "Book", "Ruler", "Scissors", "Glue", "Backpack", "Desk", "Chair", "Whiteboard", "Marker", "Crayon", "Sharpener", "Calculator", "Computer", "Textbook", "Folder", "Compass", "chalk"]
+// รายการคำศัพท์พร้อม Emoji สำรองของแต่ละคำ
+const vocabDatabase = {
+    "Number words": [
+        { word: "Zero", emoji: "0️⃣" }, { word: "Eleven", emoji: "1️⃣1️⃣" }, { word: "Twelve", emoji: "1️⃣2️⃣" },
+        { word: "Thirteen", emoji: "1️⃣3️⃣" }, { word: "Twenty", emoji: "2️⃣0️⃣" }, { word: "Forty", emoji: "4️⃣0️⃣" },
+        { word: "Fifty", emoji: "5️⃣0️⃣" }, { word: "Hundred", emoji: "💯" }, { word: "Thousand", emoji: "🔢" },
+        { word: "Million", emoji: "💰" }, { word: "Billion", emoji: "💎" }, { word: "First", emoji: "🥇" },
+        { word: "Second", emoji: "🥈" }, { word: "Third", emoji: "🥉" }, { word: "Fourth", emoji: "4️⃣" },
+        { word: "Single", emoji: "1️⃣" }, { word: "Double", emoji: "2️⃣" }, { word: "Triple", emoji: "3️⃣" },
+        { word: "Quarter", emoji: "🍕" }, { word: "Half", emoji: "🌗" }
+    ],
+    "Fruits": [
+        { word: "Cherry", emoji: "🍒" }, { word: "Plum", emoji: "🍑" }, { word: "Kiwi", emoji: "🥝" },
+        { word: "Papaya", emoji: "🥭" }, { word: "Avocado", emoji: "🥑" }, { word: "Coconut", emoji: "🥥" },
+        { word: "Pomegranate", emoji: "🍎" }, { word: "Watermelon", emoji: "🍉" }, { word: "Pineapple", emoji: "🍍" },
+        { word: "Mango", emoji: "🥭" }, { word: "Blueberry", emoji: "🫐" }, { word: "Lemon", emoji: "🍋" },
+        { word: "Lime", emoji: "🍋‍🟩" }, { word: "Peach", emoji: "🍑" }, { word: "Apple", emoji: "🍎" },
+        { word: "Banana", emoji: "🍌" }, { word: "Orange", emoji: "🍊" }, { word: "Strawberry", emoji: "🍓" },
+        { word: "Grape", emoji: "🍇" }, { word: "Pears", emoji: "🍐" }, { word: "Dragon fruit", emoji: "🐉" }
+    ],
+    "Action Verbs": [
+        { word: "Run", emoji: "🏃" }, { word: "Jump", emoji: "🤸" }, { word: "Walk", emoji: "🚶" },
+        { word: "Swim", emoji: "🏊" }, { word: "Read", emoji: "📖" }, { word: "Write", emoji: "✍️" },
+        { word: "Speak", emoji: "🗣️" }, { word: "Listen", emoji: "🎧" }, { word: "Eat", emoji: "🍽️" },
+        { word: "Drink", emoji: "🥤" }, { word: "Cook", emoji: "🧑‍🍳" }, { word: "Dance", emoji: "💃" },
+        { word: "Sing", emoji: "🎤" }, { word: "Laugh", emoji: "😄" }, { word: "Cry", emoji: "😭" },
+        { word: "Build", emoji: "🧱" }, { word: "Think", emoji: "🤔" }, { word: "Drive", emoji: "🚗" },
+        { word: "Sleep", emoji: "😴" }, { word: "Smile", emoji: "😊" }
+    ],
+    "Family": [
+        { word: "Mother", emoji: "👩" }, { word: "Father", emoji: "👨" }, { word: "Parents", emoji: "🧑‍🧑‍🧒" },
+        { word: "Son", emoji: "👦" }, { word: "Daughter", emoji: "👧" }, { word: "Brother", emoji: "👦" },
+        { word: "Sister", emoji: "👧" }, { word: "Grandmother", emoji: "👵" }, { word: "Grandfather", emoji: "👴" },
+        { word: "Grandparents", emoji: "👵👴" }, { word: "Grandson", emoji: "👦" }, { word: "Granddaughter", emoji: "👧" },
+        { word: "Uncle", emoji: "🧔" }, { word: "Aunt", emoji: "👩" }, { word: "Cousin", emoji: "🧑" },
+        { word: "Nephew", emoji: "👦" }, { word: "Niece", emoji: "👧" }, { word: "Husband", emoji: "👨" },
+        { word: "Wife", emoji: "👩" }, { word: "Sibling", emoji: "🧑‍🤝‍🧑" }
+    ],
+    "Places": [
+        { word: "House", emoji: "🏠" }, { word: "School", emoji: "🏫" }, { word: "Hospital", emoji: "🏥" },
+        { word: "Market", emoji: "🏪" }, { word: "Park", emoji: "🛝" }, { word: "Library", emoji: "📚" },
+        { word: "Bank", emoji: "🏦" }, { word: "Airport", emoji: "✈️" }, { word: "Station", emoji: "🚉" },
+        { word: "Restaurant", emoji: "🍴" }, { word: "Hotel", emoji: "🏨" }, { word: "Museum", emoji: "🏛️" },
+        { word: "Beach", emoji: "🏖️" }, { word: "Cinema", emoji: "🎬" }, { word: "Church", emoji: "⛪" },
+        { word: "Supermarket", emoji: "🛒" }, { word: "Bakery", emoji: "🧁" }, { word: "Pharmacy", emoji: "💊" },
+        { word: "Gym", emoji: "🏋️" }, { word: "Office", emoji: "🏢" }
+    ],
+    "School Things": [
+        { word: "Pencil", emoji: "✏️" }, { word: "Pen", emoji: "🖊️" }, { word: "Eraser", emoji: "🧹" },
+        { word: "Notebook", emoji: "📓" }, { word: "Book", emoji: "📕" }, { word: "Ruler", emoji: "📏" },
+        { word: "Scissors", emoji: "✂️" }, { word: "Glue", emoji: "🧴" }, { word: "Backpack", emoji: "🎒" },
+        { word: "Desk", emoji: "🪑" }, { word: "Chair", emoji: "🪑" }, { word: "Whiteboard", emoji: "📋" },
+        { word: "Marker", emoji: "🖊️" }, { word: "Crayon", emoji: "🖍️" }, { word: "Sharpener", emoji: "✏️" },
+        { word: "Calculator", emoji: "🧮" }, { word: "Computer", emoji: "💻" }, { word: "Textbook", emoji: "📘" },
+        { word: "Folder", emoji: "📁" }, { word: "Compass", emoji: "🧭" }, { word: "chalk", emoji: "🖍️" }
+    ]
 };
 
-let currentOriginalWord = "";
+let currentItem = null;
 
+// ฟังก์ชันสลับอักษร
 function shuffle(word) {
     let array = word.toLowerCase().split('');
-    // หากมีช่องว่าง (เช่น Dragon fruit) ให้คงช่องว่างไว้แล้วสลับเฉพาะตัวอักษร
     for (let i = array.length - 1; i > 0; i--) {
         if (array[i] === ' ') continue;
         let j = Math.floor(Math.random() * (i + 1));
@@ -62,12 +126,36 @@ function shuffle(word) {
     return (scrambled === word.toLowerCase() && word.length > 2) ? shuffle(word) : scrambled;
 }
 
+// ฟังก์ชันดึงรูปจาก Unsplash พร้อมระบบ Fallback เป็น Emoji
+function loadImage(term, fallbackEmoji) {
+    const container = document.getElementById("img-container");
+    container.innerHTML = `<span class="fallback-emoji">${fallbackEmoji}</span>`; // แสดง Emoji นำไปก่อนทันที
+
+    const img = new Image();
+    // ดึงรูปคมชัดน่ารักขนาด 400x300 ตามคำศัพท์
+    img.src = `https://source.unsplash.com/400x300/?cute,${encodeURIComponent(term)}`;
+    img.alt = term;
+
+    img.onload = function() {
+        container.innerHTML = "";
+        container.appendChild(img); // รูปโหลดเสร็จ เอามาสลับแทนที่ Emoji
+    };
+
+    img.onerror = function() {
+        // หากเน็ตหลุด โหลดรูปไม่ได้ จะปล่อยให้ Emoji แสดงผลค้างไว้ตามเดิม
+    };
+}
+
 function nextQuestion() {
     const category = document.getElementById("category").value;
-    const words = vocabData[category];
-    currentOriginalWord = words[Math.floor(Math.random() * words.length)];
+    const items = vocabDatabase[category];
+    currentItem = items[Math.floor(Math.random() * items.length)];
     
-    document.getElementById("scrambled-word").innerText = shuffle(currentOriginalWord).toUpperCase();
+    // โหลดรูปภาพ
+    loadImage(currentItem.word, currentItem.emoji);
+
+    // แสดงคำสลับ
+    document.getElementById("scrambled-word").innerText = shuffle(currentItem.word).toUpperCase();
     document.getElementById("user-input").value = "";
     document.getElementById("result").innerText = "";
     document.getElementById("user-input").focus();
@@ -77,16 +165,16 @@ function checkAnswer() {
     const userInput = document.getElementById("user-input").value.trim().toLowerCase();
     const resultDiv = document.getElementById("result");
     
-    if (userInput === currentOriginalWord.toLowerCase()) {
-        resultDiv.style.color = "green";
-        resultDiv.innerText = "🎉 ถูกต้องครับ! (Correct!)";
+    if (userInput === currentItem.word.toLowerCase()) {
+        resultDiv.style.color = "#2e7d32";
+        resultDiv.innerText = "🎉 ถูกต้องครับเก่งมาก! (Correct!)";
     } else {
-        resultDiv.style.color = "red";
-        resultDiv.innerText = `❌ ยังไม่ถูกครับ ลองอีกที! (เฉลย: ${currentOriginalWord})`;
+        resultDiv.style.color = "#c62828";
+        resultDiv.innerText = `❌ ยังไม่ถูกครับ (เฉลย: ${currentItem.word})`;
     }
 }
 
-// เริ่มต้นเกมคำแรก
+// โหลดคำแรก
 nextQuestion();
 </script>
 
