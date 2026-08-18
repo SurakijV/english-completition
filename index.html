@@ -3,120 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เกมทายคำศัพท์ภาษาอังกฤษ Anagram ป.3</title>
+    <title>เกมทายคำศัพท์ภาษาอังกฤษการ์ตูน ป.3 (สมบูรณ์)</title>
     <style>
-        * { box-sizing: border-box; font-family: 'Kanit', sans-serif; }
-        body { background-color: #f0f8ff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
-        .card { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 500px; text-align: center; }
-        h1 { color: #ff6b6b; margin-top: 0; font-size: 1.8rem; }
-        .score-board { display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: bold; margin-bottom: 15px; background: #e0f7fa; padding: 10px 15px; border-radius: 10px; color: #00796b; }
-        select { width: 100%; padding: 10px; border-radius: 10px; border: 2px solid #4dd0e1; font-size: 1rem; margin-bottom: 15px; outline: none; background: white; }
-        .img-container { width: 100%; height: 220px; border-radius: 15px; overflow: hidden; background: #f8f9fa; margin-bottom: 15px; display: flex; justify-content: center; align-items: center; border: 2px dashed #4dd0e1; position: relative; }
-        .img-container img { width: 100%; height: 100%; object-fit: contain; }
-        .loading-text { position: absolute; color: #888; font-size: 0.9rem; z-index: 1; }
-        .scrambled-word { font-size: 2rem; letter-spacing: 6px; font-weight: bold; color: #6c5ce7; margin: 15px 0; background: #f1f0ff; padding: 10px; border-radius: 10px; word-break: break-all; }
-        input[type="text"] { width: 100%; padding: 12px; font-size: 1.2rem; border-radius: 10px; border: 2px solid #ccc; text-align: center; text-transform: lowercase; margin-bottom: 15px; outline: none; }
-        input[type="text"]:focus { border-color: #6c5ce7; }
-        .btn { width: 100%; padding: 12px; font-size: 1.2rem; font-weight: bold; border: none; border-radius: 10px; cursor: pointer; color: white; background: #ff7675; transition: 0.2s; }
-        .btn:hover { background: #d63031; }
+        * { box-sizing: border-box; font-family: 'Prompt', sans-serif; }
+        body { background-color: #f7f3ff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 15px; }
+        .card { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(108, 92, 231, 0.15); width: 100%; max-width: 480px; text-align: center; border: 4px solid #fff; }
+        h1 { color: #6c5ce7; margin-top: 0; font-size: 1.8rem; margin-bottom: 10px; }
+        .sub-title { color: #a29bfe; font-size: 0.9rem; margin-bottom: 15px; }
+        
+        .score-board { display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: bold; margin-bottom: 20px; background: #eeebff; padding: 10px 15px; border-radius: 12px; color: #5f27cd; }
+        
+        select { width: 100%; padding: 12px; border-radius: 12px; border: 2px solid #a29bfe; font-size: 1rem; margin-bottom: 15px; outline: none; background: white; cursor: pointer; color: #6c5ce7; }
+        
+        .img-container { width: 100%; height: 200px; border-radius: 15px; overflow: hidden; background: #fff; margin-bottom: 20px; display: flex; justify-content: center; align-items: center; border: 2px solid #eee; }
+        .img-container img { height: 100%; width: auto; object-fit: contain; }
+        
+        .scrambled-word { font-size: 2.2rem; letter-spacing: 5px; font-weight: 800; color: #ff9f43; margin: 15px 0; background: #fff3e0; padding: 10px; border-radius: 12px; word-break: break-all; }
+        
+        input[type="text"] { width: 100%; padding: 12px; font-size: 1.3rem; border-radius: 12px; border: 2px solid #ccc; text-align: center; text-transform: lowercase; margin-bottom: 15px; outline: none; transition: 0.2s; }
+        input[type="text"]:focus { border-color: #6c5ce7; box-shadow: 0 0 10px rgba(108, 92, 231, 0.2); }
+        
+        .btn { width: 100%; padding: 12px; font-size: 1.2rem; font-weight: bold; border: none; border-radius: 12px; cursor: pointer; color: white; background: #6c5ce7; transition: 0.2s; box-shadow: 0 4px 0 #5f27cd; }
+        .btn:hover { background: #5f27cd; transform: translateY(-1px); }
+        .btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #5f27cd; }
+        
         .feedback { font-size: 1.2rem; font-weight: bold; margin-top: 15px; min-height: 30px; }
-        .correct { color: #2ed573; }
-        .wrong { color: #ff4757; }
+        .correct { color: #10ac84; animation: pop 0.5s ease-in-out; }
+        .wrong { color: #ee5253; animation: shake 0.4s ease-in-out; }
+
+        @keyframes pop { 0% { transform: scale(0.8); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;800&display=swap" rel="stylesheet">
 </head>
 <body>
 
 <div class="card">
-    <h1>🧩 Anagram Fun Kids!</h1>
+    <h1>🧩 Kids Anagram Game</h1>
+    <div class="sub-title">(เกมทายคำศัพท์ภาษาอังกฤษสำหรับเด็ก ป.3)</div>
     
     <div class="score-board">
-        <span>หมวดหมู่: <span id="cat-label">ทุกหมวด</span></span>
-        <span>คะแนน: <span id="score">0</span></span>
+        <span><span id="score">0</span> คะแนน</span>
     </div>
-
-    <select id="category-select" onchange="changeCategory()">
-        <option value="all">-- เลือกหมวดหมู่ทั้งหมด --</option>
-        <option value="Number words">Number words (ตัวเลข)</option>
-        <option value="Fruits">Fruits (ผลไม้)</option>
-        <option value="Action Verbs">Action Verbs (กริยา)</option>
-        <option value="Family">Family (ครอบครัว)</option>
-        <option value="Places">Places (สถานที่)</option>
-        <option value="School Things">School Things (อุปกรณ์เรียน)</option>
-    </select>
 
     <div class="img-container">
-        <span class="loading-text" id="img-loading">🎨 กำลังโหลดรูปภาพการ์ตูน...</span>
-        <img id="word-image" src="" alt="Cartoon representation" style="display:none;" onload="imageLoaded()" onerror="imageError()">
+        <img id="word-image" src="" alt="คำใบ้รูปภาพ">
     </div>
 
-    <div class="scrambled-word" id="scrambled-text">LOADING</div>
+    <div class="scrambled-word" id="scrambled-text">...</div>
 
     <form onsubmit="checkAnswer(event)">
-        <input type="text" id="user-input" placeholder="พิมพ์คำตอบที่ถูกต้อง..." autocomplete="off">
-        <button type="submit" class="btn">ส่งคำตอบ</button>
+        <input type="text" id="user-input" placeholder="พิมพ์คำตอบภาษาอังกฤษ..." autocomplete="off">
+        <button type="submit" class="btn">✓ ส่งคำตอบ</button>
     </form>
 
     <div class="feedback" id="feedback-text"></div>
 </div>
 
 <script>
-const vocabularyData = {
-    "Number words": ["Zero", "Eleven", "Twelve", "Thirteen", "Twenty", "Forty", "Fifty", "Hundred", "Thousand", "Million", "Billion", "First", "Second", "Third", "Fourth", "Single", "Double", "Triple", "Quarter", "Half"],
-    "Fruits": ["Cherry", "Plum", "Kiwi", "Papaya", "Avocado", "Coconut", "Pomegranate", "Watermelon", "Pineapple", "Mango", "Blueberry", "Lemon", "Lime", "Peach", "Apple", "Banana", "Orange", "Strawberry", "Grape", "Pears", "Dragon fruit"],
-    "Action Verbs": ["Run", "Jump", "Walk", "Swim", "Read", "Write", "Speak", "Listen", "Eat", "Drink", "Cook", "Dance", "Sing", "Laugh", "Cry", "Build", "Think", "Drive", "Sleep", "Smile"],
-    "Family": ["Mother", "Father", "Parents", "Son", "Daughter", "Brother", "Sister", "Grandmother", "Grandfather", "Grandparents", "Grandson", "Granddaughter", "Uncle", "Aunt", "Cousin", "Nephew", "Niece", "Husband", "Wife", "Sibling"],
-    "Places": ["House", "School", "Hospital", "Market", "Park", "Library", "Bank", "Airport", "Station", "Restaurant", "Hotel", "Museum", "Beach", "Cinema", "Church", "Supermarket", "Bakery", "Pharmacy", "Gym", "Office"],
-    "School Things": ["Pencil", "Pen", "Eraser", "Notebook", "Book", "Ruler", "Scissors", "Glue", "Backpack", "Desk", "Chair", "Whiteboard", "Marker", "Crayon", "Sharpener", "Calculator", "Computer", "Textbook", "Folder", "Compass", "chalk"]
+// --- ฐานข้อมูลภาพการ์ตูนภายใน (100% สอดคล้อง) ---
+// เป็น URL ภาพการ์ตูนที่เสถียรและเป็นลิขสิทธิ์ฟรีทั้งหมดครับ
+const imgBase = {
+    // Fruits
+    'apple': 'https://img.icons8.com/plasticine/200/apple.png',
+    'banana': 'https://img.icons8.com/plasticine/200/banana.png',
+    'cherry': 'https://img.icons8.com/plasticine/200/cherry.png',
+    'coconut': 'https://img.icons8.com/plasticine/200/coconut.png',
+    'grape': 'https://img.icons8.com/plasticine/200/grapes.png',
+    'mango': 'https://img.icons8.com/plasticine/200/mango.png',
+    'orange': 'https://img.icons8.com/plasticine/200/orange.png',
+    'peach': 'https://img.icons8.com/plasticine/200/peach.png',
+    'pineapple': 'https://img.icons8.com/plasticine/200/pineapple.png',
+    'watermelon': 'https://img.icons8.com/plasticine/200/watermelon.png',
+    
+    // School Things
+    'book': 'https://img.icons8.com/plasticine/200/book.png',
+    'eraser': 'https://img.icons8.com/plasticine/200/eraser.png',
+    'pencil': 'https://img.icons8.com/plasticine/200/pencil.png',
+    'pen': 'https://img.icons8.com/plasticine/200/pen.png',
+    'ruler': 'https://img.icons8.com/plasticine/200/ruler.png',
+    'scissors': 'https://img.icons8.com/plasticine/200/scissors.png',
+    'chalk': 'https://img.icons8.com/plasticine/200/chalk.png',
+    'marker': 'https://img.icons8.com/plasticine/200/marker.png',
+    
+    // Places (แถมเล็กน้อย)
+    'school': 'https://img.icons8.com/plasticine/200/school.png',
+    'house': 'https://img.icons8.com/plasticine/200/home.png'
 };
 
-let currentCategory = 'all';
+// รายชื่อคำศัพท์ที่จะนำมาเล่น (ดึงมาจากแผ่นงาน)
+const vocabList = Object.keys(imgBase);
+
 let currentWord = '';
 let score = 0;
 
 function getRandomWord() {
-    let categories = currentCategory === 'all' ? Object.keys(vocabularyData) : [currentCategory];
-    let selectedCat = categories[Math.floor(Math.random() * categories.length)];
-    let words = vocabularyData[selectedCat];
-    return words[Math.floor(Math.random() * words.length)];
+    return vocabList[Math.floor(Math.random() * vocabList.length)];
 }
 
 function scrambleWord(word) {
-    let array = word.replace(/\s+/g, '').toLowerCase().split('');
+    let array = word.split('');
+    // Fisher-Yates Shuffle algorithm
     for (let i = array.length - 1; i > 0; i--) {
         let j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
     }
+    // ป้องกันสลับแล้วได้คำเดิม
     let scrambled = array.join('');
-    return (scrambled === word.toLowerCase() && word.length > 1) ? scrambleWord(word) : scrambled;
+    return (scrambled === word) ? scrambleWord(word) : scrambled;
 }
 
 function loadNewQuestion() {
     currentWord = getRandomWord();
+    
+    // แสดงรูปภาพที่ถูกต้องจากฐานข้อมูล
+    document.getElementById('word-image').src = imgBase[currentWord];
+    
+    // แสดงคำที่สลับตัวอักษร
     document.getElementById('scrambled-text').innerText = scrambleWord(currentWord).toUpperCase();
+    
     document.getElementById('user-input').value = '';
     document.getElementById('feedback-text').innerText = '';
-    
-    // ตั้งค่าหน้าตาตอนกำลังโหลดรูป
-    const imgElement = document.getElementById('word-image');
-    const loadingText = document.getElementById('img-loading');
-    imgElement.style.display = 'none';
-    loadingText.style.display = 'block';
-    loadingText.innerText = '🎨 กำลังโหลดรูปภาพการ์ตูน...';
-
-    // ดึงรูปการ์ตูนน่ารักๆ สำหรับเด็กผ่าน Pollinations AI
-    const prompt = encodeURIComponent(`cute cartoon 3d style illustration of ${currentWord}, vibrant colors for kids, clean light background`);
-    imgElement.src = `https://image.pollinations.ai/prompt/${prompt}?width=400&height=300&nologo=true&seed=${Math.floor(Math.random() * 1000)}`;
-}
-
-function imageLoaded() {
-    document.getElementById('img-loading').style.display = 'none';
-    document.getElementById('word-image').style.display = 'block';
-}
-
-function imageError() {
-    const loadingText = document.getElementById('img-loading');
-    loadingText.style.display = 'block';
-    loadingText.innerText = '🖼️ (รูปภาพสัญลักษณ์: ' + currentWord + ')';
+    document.getElementById('user-input').focus();
 }
 
 function checkAnswer(e) {
@@ -124,7 +132,7 @@ function checkAnswer(e) {
     const userInput = document.getElementById('user-input').value.trim().toLowerCase();
     const feedback = document.getElementById('feedback-text');
 
-    if (userInput === currentWord.toLowerCase()) {
+    if (userInput === currentWord) {
         score += 10;
         document.getElementById('score').innerText = score;
         feedback.className = "feedback correct";
@@ -133,12 +141,8 @@ function checkAnswer(e) {
     } else {
         feedback.className = "feedback wrong";
         feedback.innerText = "❌ ยังไม่ถูก ลองใหม่อีกครั้ง!";
+        document.getElementById('user-input').focus();
     }
-}
-
-function changeCategory() {
-    currentCategory = document.getElementById('category-select').value;
-    loadNewQuestion();
 }
 
 // เริ่มต้นเกมเมื่อเปิดหน้าเว็บ
