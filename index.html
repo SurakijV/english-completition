@@ -36,7 +36,7 @@
 
     <h2>🧩 Kid Anagram Game 🧩</h2>
     <label for="category">เลือกหมวดหมู่:</label>
-    <select id="category" onchange="nextQuestion()">
+    <select id="category" onchange="changeCategory()">
         <option value="Number words">Number words (20 คำ)</option>
         <option value="Fruits">Fruits (21 คำ)</option>
         <option value="Action Verbs">Action Verbs (20 คำ)</option>
@@ -58,7 +58,6 @@
 </div>
 
 <script>
-// รายการคำศัพท์พร้อม Emoji และคำอ่านภาษาไทย
 const vocabDatabase = {
     "Number words": [
         { word: "Zero", emoji: "0️⃣", thai: "ซีโร่" }, { word: "Eleven", emoji: "1️⃣1️⃣", thai: "อีเลฟเวน" }, { word: "Twelve", emoji: "1️⃣2️⃣", thai: "เทเวลฟ์" },
@@ -116,11 +115,22 @@ const vocabDatabase = {
     ]
 };
 
+let currentPool = []; // กองคำศัพท์ที่ยังไม่ได้เล่น
 let currentItem = null;
 let score = 0;
 let isAnswered = false;
 
-function shuffle(word) {
+// ฟังก์ชันสลับตำแหน่งอาเรย์แบบ Fisher-Yates (สุ่มไม่ให้ซ้ำ)
+function shuffleArray(array) {
+    let arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+function shuffleWord(word) {
     let array = word.toLowerCase().split('');
     for (let i = array.length - 1; i > 0; i--) {
         if (array[i] === ' ') continue;
@@ -129,7 +139,7 @@ function shuffle(word) {
         [array[i], array[j]] = [array[j], array[i]];
     }
     let scrambled = array.join('');
-    return (scrambled === word.toLowerCase() && word.length > 2) ? shuffle(word) : scrambled;
+    return (scrambled === word.toLowerCase() && word.length > 2) ? shuffleWord(word) : scrambled;
 }
 
 function loadImage(term, fallbackEmoji) {
@@ -146,25 +156,35 @@ function loadImage(term, fallbackEmoji) {
     };
 }
 
-// ฟังก์ชันอ่านออกเสียงภาษาอังกฤษ
 function speakWord() {
     if (!currentItem) return;
     const utterance = new SpeechSynthesisUtterance(currentItem.word);
     utterance.lang = 'en-US';
-    utterance.rate = 0.85; // ปรับให้พูดช้าลงเล็กน้อย เหมาะสำหรับเด็ก
+    utterance.rate = 0.85;
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(utterance);
 }
 
+function changeCategory() {
+    currentPool = []; // ล้างกองคำศัพท์เดิมเมื่อเปลี่ยนหมวด
+    nextQuestion();
+}
+
 function nextQuestion() {
     const category = document.getElementById("category").value;
-    const items = vocabDatabase[category];
-    currentItem = items[Math.floor(Math.random() * items.length)];
+    
+    // หากกองคำศัพท์ว่างเปล่า ให้สร้างกองสุ่มคำใหม่จากหมวดที่เลือก
+    if (currentPool.length === 0) {
+        currentPool = shuffleArray(vocabDatabase[category]);
+    }
+    
+    // ดึงคำศัพท์ทีละคำออกจากกอง (ไม่ซ้ำแน่นอน)
+    currentItem = currentPool.pop();
     isAnswered = false;
     
     loadImage(currentItem.word, currentItem.emoji);
 
-    document.getElementById("scrambled-word").innerText = shuffle(currentItem.word).toUpperCase();
+    document.getElementById("scrambled-word").innerText = shuffleWord(currentItem.word).toUpperCase();
     document.getElementById("user-input").value = "";
     document.getElementById("result").innerText = "";
     document.getElementById("user-input").focus();
@@ -183,15 +203,15 @@ function checkAnswer() {
         }
         resultDiv.style.color = "#2e7d32";
         resultDiv.innerHTML = `🎉 ถูกต้องครับ! <b>${currentItem.word}</b> <span class="thai-read">(คำอ่าน: ${currentItem.thai})</span>`;
-        speakWord(); // อ่านออกเสียงทันทีเมื่อตอบถูก
+        speakWord();
     } else {
         resultDiv.style.color = "#c62828";
         resultDiv.innerHTML = `❌ ยังไม่ถูกครับ <span class="thai-read">(เฉลย: <b>${currentItem.word}</b> - อ่านว่า: ${currentItem.thai})</span>`;
     }
 }
 
-// โหลดข้อแรก
-nextQuestion();
+// เริ่มต้นเกม
+changeCategory();
 </script>
 
 </body>
