@@ -3,332 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เกมทายคำศัพท์ภาษาอังกฤษ Anagram ป.3 (มีปุ่มข้าม)</title>
+    <title>Kid Anagram Game</title>
     <style>
-        * { box-sizing: border-box; font-family: 'Prompt', sans-serif; }
-        body { background-color: #f7f3ff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 15px; }
-        .card { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(108, 92, 231, 0.15); width: 100%; max-width: 500px; text-align: center; border: 4px solid #fff; position: relative; }
-        h1 { color: #6c5ce7; margin-top: 0; font-size: 1.8rem; margin-bottom: 5px; }
-        .sub-title { color: #a29bfe; font-size: 0.9rem; margin-bottom: 20px; }
-        
-        .category-card { background: #f8f9fe; border: 2px dashed #a29bfe; border-radius: 15px; padding: 15px; margin-bottom: 20px; text-align: left; }
-        .category-card label { display: block; font-weight: 600; color: #5f27cd; margin-bottom: 8px; font-size: 0.95rem; }
-        select { width: 100%; padding: 12px; border-radius: 12px; border: 2px solid #a29bfe; font-size: 1rem; outline: none; background: white; cursor: pointer; color: #6c5ce7; font-weight: 600; }
-        
-        .score-board { display: flex; justify-content: space-between; font-size: 0.95rem; font-weight: bold; margin-bottom: 15px; background: #eeebff; padding: 10px 15px; border-radius: 12px; color: #5f27cd; }
-        
-        .img-container { width: 100%; height: 200px; border-radius: 15px; overflow: hidden; background: #f1f2f6; margin-bottom: 15px; display: flex; justify-content: center; align-items: center; border: 2px solid #dfe4ea; position: relative; }
-        .img-container img { width: 100%; height: 100%; object-fit: cover; border-radius: 13px; }
-        .emoji-fallback { font-size: 5rem; display: none; }
-
-        .scrambled-word { font-size: 2.2rem; letter-spacing: 5px; font-weight: 800; color: #ff9f43; margin: 15px 0; background: #fff3e0; padding: 10px; border-radius: 12px; word-break: break-all; }
-        
-        input[type="text"] { width: 100%; padding: 12px; font-size: 1.3rem; border-radius: 12px; border: 2px solid #ccc; text-align: center; text-transform: lowercase; margin-bottom: 12px; outline: none; transition: 0.2s; }
-        input[type="text"]:focus { border-color: #6c5ce7; box-shadow: 0 0 10px rgba(108, 92, 231, 0.2); }
-        
-        .btn-group { display: flex; gap: 10px; margin-bottom: 10px; }
-        .btn { width: 100%; padding: 12px; font-size: 1.1rem; font-weight: bold; border: none; border-radius: 12px; cursor: pointer; color: white; background: #6c5ce7; transition: 0.2s; box-shadow: 0 4px 0 #5f27cd; }
-        .btn:hover { background: #5f27cd; transform: translateY(-1px); }
-        .btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #5f27cd; }
-        
-        .btn-skip { background: #ff9f43; box-shadow: 0 4px 0 #e67e22; }
-        .btn-skip:hover { background: #e67e22; }
-        .btn-skip:active { box-shadow: 0 1px 0 #e67e22; }
-
-        .btn-outline { background: transparent; color: #6c5ce7; border: 2px solid #6c5ce7; box-shadow: none; font-size: 0.95rem; padding: 8px; margin-top: 5px; }
-        .btn-outline:hover { background: #eeebff; transform: none; }
-
-        .feedback { font-size: 1.1rem; font-weight: bold; margin-top: 10px; min-height: 25px; }
-        .correct { color: #10ac84; animation: pop 0.5s ease-in-out; }
-        .wrong { color: #ee5253; animation: shake 0.4s ease-in-out; }
-        .skipped { color: #ff9f43; }
-
-        @keyframes pop { 0% { transform: scale(0.8); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
+        body { font-family: 'Comic Sans MS', cursive, sans-serif; text-align: center; background: #f0f8ff; padding: 20px; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        select, button { font-size: 16px; padding: 10px; margin: 10px; border-radius: 8px; border: 1px solid #ccc; }
+        .scrambled { font-size: 32px; letter-spacing: 5px; color: #ff6f61; font-weight: bold; margin: 20px 0; }
+        input { font-size: 20px; padding: 8px; text-align: center; width: 70%; border-radius: 8px; border: 2px solid #4caf50; }
+        #result { margin-top: 15px; font-size: 20px; font-weight: bold; }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;800&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<div class="card">
-    <h1>🧩 Kids Anagram Game</h1>
-    <div class="sub-title">(เกมทายคำศัพท์ภาษาอังกฤษสำหรับเด็ก ป.3)</div>
+<div class="container">
+    <h2>🧩 Kid Anagram Game 🧩</h2>
+    <label for="category">เลือกหมวดหมู่:</label>
+    <select id="category" onchange="nextQuestion()">
+        <option value="Number words">Number words (20 คำ)</option>
+        <option value="Fruits">Fruits (21 คำ)</option>
+        <option value="Action Verbs">Action Verbs (20 คำ)</option>
+        <option value="Family">Family (20 คำ)</option>
+        <option value="Places">Places (20 คำ)</option>
+        <option value="School Things">School Things (21 คำ)</option>
+    </select>
 
-    <!-- หน้าที่ 1: เลือกหมวดหมู่ -->
-    <div id="selection-screen">
-        <div class="category-card">
-            <label for="category-select">เลือกหมวดหมู่ที่ต้องการเล่น:</label>
-            <select id="category-select">
-                <option value="all">🌟 ทุกหมวดหมู่ (สุ่มรวมทุกคำ)</option>
-                <option value="numbers">🔢 Number words (คำศัพท์ตัวเลข)</option>
-                <option value="fruits">🍎 Fruits (ผลไม้)</option>
-                <option value="verbs">🏃 Action Verbs (กริยาอาการ)</option>
-                <option value="family">👨‍👩‍👧‍👦 Family (ครอบครัว)</option>
-                <option value="places">🏫 Places (สถานที่)</option>
-                <option value="school">✏️ School Things (อุปกรณ์การเรียน)</option>
-            </select>
-        </div>
-        <button class="btn" onclick="startGame()">🚀 เริ่มเล่นเกมเลย!</button>
-    </div>
+    <div class="scrambled" id="scrambled-word">----</div>
+    <input type="text" id="user-input" placeholder="พิมพ์คำตอบภาษาอังกฤษ" autocomplete="off">
+    <br>
+    <button onclick="checkAnswer()">ตรวจคำตอบ</button>
+    <button onclick="nextQuestion()">คำถัดไป ➡️</button>
 
-    <!-- หน้าที่ 2: หน้าเล่นเกม -->
-    <div id="game-screen" style="display: none;">
-        <div class="score-board">
-            <span>หมวด: <span id="current-cat-name">ทุกหมวด</span></span>
-            <span>เหลือ: <span id="remaining-count">0</span> คำ</span>
-            <span>คะแนน: <span id="score">0</span></span>
-        </div>
-
-        <div class="img-container">
-            <img id="word-image" src="" alt="คำใบ้รูปภาพ" onerror="handleImageError()">
-            <div id="emoji-fallback" class="emoji-fallback"></div>
-        </div>
-
-        <div class="scrambled-word" id="scrambled-text">...</div>
-
-        <form id="game-form" onsubmit="checkAnswer(event)">
-            <input type="text" id="user-input" placeholder="พิมพ์คำตอบภาษาอังกฤษ..." autocomplete="off">
-            <div class="btn-group">
-                <button type="submit" class="btn">✓ ส่งคำตอบ</button>
-                <button type="button" class="btn btn-skip" onclick="skipQuestion()">⏩ ข้ามไปก่อน</button>
-            </div>
-        </form>
-
-        <button type="button" class="btn btn-outline" onclick="resetToMenu()">⚙️ เปลี่ยนหมวดหมู่</button>
-
-        <div class="feedback" id="feedback-text"></div>
-    </div>
+    <div id="result"></div>
 </div>
 
 <script>
-const database = {
-    numbers: {
-        name: 'Number words (ตัวเลข)',
-        words: {
-            'zero': { img: 'https://images.unsplash.com/photo-1590082871875-064201a27373?w=400&q=80', emoji: '0️⃣' },
-            'eleven': { img: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400&q=80', emoji: '1️⃣1️⃣' },
-            'twelve': { img: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400&q=80', emoji: '1️⃣2️⃣' },
-            'thirteen': { img: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400&q=80', emoji: '1️⃣3️⃣' },
-            'twenty': { img: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400&q=80', emoji: '2️⃣0️⃣' },
-            'forty': { img: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400&q=80', emoji: '4️⃣0️⃣' },
-            'fifty': { img: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400&q=80', emoji: '5️⃣0️⃣' },
-            'hundred': { img: 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=400&q=80', emoji: '💯' },
-            'thousand': { img: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400&q=80', emoji: '💵' },
-            'million': { img: 'https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=400&q=80', emoji: '💰' },
-            'first': { img: 'https://images.unsplash.com/photo-1578269174936-2709b6aeb913?w=400&q=80', emoji: '🥇' },
-            'second': { img: 'https://images.unsplash.com/photo-1578269174936-2709b6aeb913?w=400&q=80', emoji: '🥈' },
-            'third': { img: 'https://images.unsplash.com/photo-1578269174936-2709b6aeb913?w=400&q=80', emoji: '🥉' },
-            'single': { img: 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=400&q=80', emoji: '👤' },
-            'double': { img: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&q=80', emoji: '👥' },
-            'quarter': { img: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&q=80', emoji: '🍕' }
-        }
-    },
-    fruits: {
-        name: 'Fruits (ผลไม้)',
-        words: {
-            'cherry': { img: 'https://images.unsplash.com/photo-1528825871115-3581a5387919?w=400&q=80', emoji: '🍒' },
-            'kiwi': { img: 'https://images.unsplash.com/photo-1585059819970-311922b41398?w=400&q=80', emoji: '🥝' },
-            'papaya': { img: 'https://images.unsplash.com/photo-1517260739337-6799d239ce83?w=400&q=80', emoji: '🍈' },
-            'avocado': { img: 'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=400&q=80', emoji: '🥑' },
-            'coconut': { img: 'https://images.unsplash.com/photo-1543362906-acfc16c67564?w=400&q=80', emoji: '🥥' },
-            'watermelon': { img: 'https://images.unsplash.com/photo-1587049352847-81a56d773cae?w=400&q=80', emoji: '🍉' },
-            'pineapple': { img: 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?w=400&q=80', emoji: '🍍' },
-            'mango': { img: 'https://images.unsplash.com/photo-1553279768-865429fa0078?w=400&q=80', emoji: '🥭' },
-            'lemon': { img: 'https://images.unsplash.com/photo-1534531141161-e4ea27141d06?w=400&q=80', emoji: '🍋' },
-            'apple': { img: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400&q=80', emoji: '🍎' },
-            'banana': { img: 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=400&q=80', emoji: '🍌' },
-            'orange': { img: 'https://images.unsplash.com/photo-1547514701-42782101795e?w=400&q=80', emoji: '🍊' },
-            'strawberry': { img: 'https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=400&q=80', emoji: '🍓' },
-            'grape': { img: 'https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=400&q=80', emoji: '🍇' }
-        }
-    },
-    verbs: {
-        name: 'Action Verbs (กริยาอาการ)',
-        words: {
-            'run': { img: 'https://images.unsplash.com/photo-1486218119223-0c091886c060?w=400&q=80', emoji: '🏃' },
-            'jump': { img: 'https://images.unsplash.com/photo-1508215885820-4e135783480b?w=400&q=80', emoji: '🧍‍♂️' },
-            'walk': { img: 'https://images.unsplash.com/photo-1517649763962-0c623266010b?w=400&q=80', emoji: '🚶' },
-            'swim': { img: 'https://images.unsplash.com/photo-1530549387789-4c1017266635?w=400&q=80', emoji: '🏊' },
-            'read': { img: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&q=80', emoji: '📖' },
-            'write': { img: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=400&q=80', emoji: '✍️' },
-            'eat': { img: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400&q=80', emoji: '🍽️' },
-            'drink': { img: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400&q=80', emoji: '🥛' },
-            'cook': { img: 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=400&q=80', emoji: '🍳' },
-            'dance': { img: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=400&q=80', emoji: '💃' },
-            'sing': { img: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=400&q=80', emoji: '🎤' },
-            'sleep': { img: 'https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=400&q=80', emoji: '😴' }
-        }
-    },
-    family: {
-        name: 'Family (ครอบครัว)',
-        words: {
-            'mother': { img: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&q=80', emoji: '👩' },
-            'father': { img: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80', emoji: '👨' },
-            'parents': { img: 'https://images.unsplash.com/photo-1511895426328-dc8714191300?w=400&q=80', emoji: '👨‍👩‍👧' },
-            'son': { img: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400&q=80', emoji: '👦' },
-            'daughter': { img: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&q=80', emoji: '👧' },
-            'brother': { img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80', emoji: '👦' },
-            'sister': { img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80', emoji: '👧' },
-            'grandmother': { img: 'https://images.unsplash.com/photo-1581579438747-1dc8d1e29242?w=400&q=80', emoji: '👵' },
-            'grandfather': { img: 'https://images.unsplash.com/photo-1545167622-3a6ac756afa4?w=400&q=80', emoji: '👴' },
-            'baby': { img: 'https://images.unsplash.com/photo-1519689680058-324335c77eba?w=400&q=80', emoji: '👶' }
-        }
-    },
-    places: {
-        name: 'Places (สถานที่)',
-        words: {
-            'house': { img: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=400&q=80', emoji: '🏠' },
-            'school': { img: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400&q=80', emoji: '🏫' },
-            'hospital': { img: 'https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?w=400&q=80', emoji: '🏥' },
-            'market': { img: 'https://images.unsplash.com/photo-1533900298318-6b8da08a523e?w=400&q=80', emoji: '🏪' },
-            'park': { img: 'https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=400&q=80', emoji: '🏞️' },
-            'library': { img: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=400&q=80', emoji: '📚' },
-            'bank': { img: 'https://images.unsplash.com/photo-1541354329998-f4d9a9f9297f?w=400&q=80', emoji: '🏦' },
-            'airport': { img: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=400&q=80', emoji: '✈️' },
-            'beach': { img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=80', emoji: '🏖️' }
-        }
-    },
-    school: {
-        name: 'School Things (อุปกรณ์การเรียน)',
-        words: {
-            'pencil': { img: 'https://images.unsplash.com/photo-1585336261026-8f5786372966?w=400&q=80', emoji: '✏️' },
-            'pen': { img: 'https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?w=400&q=80', emoji: '🖊️' },
-            'eraser': { img: 'https://images.unsplash.com/photo-1629982618585-64548545d228?w=400&q=80', emoji: '🧹' },
-            'notebook': { img: 'https://images.unsplash.com/photo-1516962215378-7fa2e137ae93?w=400&q=80', emoji: '📓' },
-            'book': { img: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&q=80', emoji: '📖' },
-            'ruler': { img: 'https://images.unsplash.com/photo-1588072432836-e10032774350?w=400&q=80', emoji: '📏' },
-            'scissors': { img: 'https://images.unsplash.com/photo-1503792501406-2c40da09e1e2?w=400&q=80', emoji: '✂️' },
-            'backpack': { img: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&q=80', emoji: '🎒' },
-            'computer': { img: 'https://images.unsplash.com/photo-1587831990711-23ca6441447b?w=400&q=80', emoji: '💻' }
-        }
-    }
+// ชุดข้อมูลคำศัพท์อัปเดตล่าสุด
+const vocabData = {
+    "Number words": ["Zero", "Eleven", "Twelve", "Thirteen", "Twenty", "Forty", "Fifty", "Hundred", "Thousand", "Million", "Billion", "First", "Second", "Third", "Fourth", "Single", "Double", "Triple", "Quarter", "Half"],
+    "Fruits": ["Cherry", "Plum", "Kiwi", "Papaya", "Avocado", "Coconut", "Pomegranate", "Watermelon", "Pineapple", "Mango", "Blueberry", "Lemon", "Lime", "Peach", "Apple", "Banana", "Orange", "Strawberry", "Grape", "Pears", "Dragon fruit"],
+    "Action Verbs": ["Run", "Jump", "Walk", "Swim", "Read", "Write", "Speak", "Listen", "Eat", "Drink", "Cook", "Dance", "Sing", "Laugh", "Cry", "Build", "Think", "Drive", "Sleep", "Smile"],
+    "Family": ["Mother", "Father", "Parents", "Son", "Daughter", "Brother", "Sister", "Grandmother", "Grandfather", "Grandparents", "Grandson", "Granddaughter", "Uncle", "Aunt", "Cousin", "Nephew", "Niece", "Husband", "Wife", "Sibling"],
+    "Places": ["House", "School", "Hospital", "Market", "Park", "Library", "Bank", "Airport", "Station", "Restaurant", "Hotel", "Museum", "Beach", "Cinema", "Church", "Supermarket", "Bakery", "Pharmacy", "Gym", "Office"],
+    "School Things": ["Pencil", "Pen", "Eraser", "Notebook", "Book", "Ruler", "Scissors", "Glue", "Backpack", "Desk", "Chair", "Whiteboard", "Marker", "Crayon", "Sharpener", "Calculator", "Computer", "Textbook", "Folder", "Compass", "chalk"]
 };
 
-let currentCategoryKey = 'all';
-let activeWordsObj = {};
-let availableWords = [];
-let currentWord = '';
-let score = 0;
+let currentOriginalWord = "";
 
-function startGame() {
-    currentCategoryKey = document.getElementById('category-select').value;
-    
-    if (currentCategoryKey === 'all') {
-        activeWordsObj = {};
-        for (let key in database) {
-            Object.assign(activeWordsObj, database[key].words);
-        }
-        document.getElementById('current-cat-name').innerText = 'ทุกหมวดหมู่';
-    } else {
-        activeWordsObj = database[currentCategoryKey].words;
-        document.getElementById('current-cat-name').innerText = database[currentCategoryKey].name;
-    }
-
-    availableWords = Object.keys(activeWordsObj);
-
-    document.getElementById('selection-screen').style.display = 'none';
-    document.getElementById('game-screen').style.display = 'block';
-    document.getElementById('game-form').style.display = 'block';
-    
-    score = 0;
-    document.getElementById('score').innerText = score;
-    loadNewQuestion();
-}
-
-function resetToMenu() {
-    document.getElementById('selection-screen').style.display = 'block';
-    document.getElementById('game-screen').style.display = 'none';
-}
-
-function scrambleWord(word) {
-    let raw = word.replace(/\s+/g, '');
-    let array = raw.split('');
+function shuffle(word) {
+    let array = word.toLowerCase().split('');
+    // หากมีช่องว่าง (เช่น Dragon fruit) ให้คงช่องว่างไว้แล้วสลับเฉพาะตัวอักษร
     for (let i = array.length - 1; i > 0; i--) {
+        if (array[i] === ' ') continue;
         let j = Math.floor(Math.random() * (i + 1));
+        if (array[j] === ' ') continue;
         [array[i], array[j]] = [array[j], array[i]];
     }
     let scrambled = array.join('');
-    return (scrambled === raw && raw.length > 1) ? scrambleWord(word) : scrambled;
+    return (scrambled === word.toLowerCase() && word.length > 2) ? shuffle(word) : scrambled;
 }
 
-function loadNewQuestion() {
-    if (availableWords.length === 0) {
-        document.getElementById('scrambled-text').innerText = "🎉 WINNER!";
-        document.getElementById('word-image').style.display = 'none';
-        document.getElementById('emoji-fallback').style.display = 'block';
-        document.getElementById('emoji-fallback').innerText = "🏆";
-        document.getElementById('feedback-text').className = "feedback correct";
-        document.getElementById('feedback-text').innerText = "เก่งมาก! เล่นครบทุกคำในหมวดนี้แล้วครับ";
-        document.getElementById('game-form').style.display = 'none';
-        document.getElementById('remaining-count').innerText = "0";
-        return;
-    }
-
-    // หยิบคำแรกจากรายการมาเล่น
-    currentWord = availableWords[0];
-
-    document.getElementById('remaining-count').innerText = availableWords.length;
-
-    const imgElement = document.getElementById('word-image');
-    const fallbackElement = document.getElementById('emoji-fallback');
+function nextQuestion() {
+    const category = document.getElementById("category").value;
+    const words = vocabData[category];
+    currentOriginalWord = words[Math.floor(Math.random() * words.length)];
     
-    imgElement.style.display = 'block';
-    fallbackElement.style.display = 'none';
+    document.getElementById("scrambled-word").innerText = shuffle(currentOriginalWord).toUpperCase();
+    document.getElementById("user-input").value = "";
+    document.getElementById("result").innerText = "";
+    document.getElementById("user-input").focus();
+}
+
+function checkAnswer() {
+    const userInput = document.getElementById("user-input").value.trim().toLowerCase();
+    const resultDiv = document.getElementById("result");
     
-    imgElement.src = activeWordsObj[currentWord].img;
-    fallbackElement.innerText = activeWordsObj[currentWord].emoji;
-
-    document.getElementById('scrambled-text').innerText = scrambleWord(currentWord).toUpperCase();
-    document.getElementById('user-input').value = '';
-    document.getElementById('feedback-text').innerText = '';
-    document.getElementById('user-input').focus();
-}
-
-function handleImageError() {
-    document.getElementById('word-image').style.display = 'none';
-    document.getElementById('emoji-fallback').style.display = 'block';
-}
-
-function checkAnswer(e) {
-    e.preventDefault();
-    const userInput = document.getElementById('user-input').value.trim().toLowerCase();
-    const feedback = document.getElementById('feedback-text');
-
-    if (userInput === currentWord.toLowerCase()) {
-        score += 10;
-        document.getElementById('score').innerText = score;
-        feedback.className = "feedback correct";
-        feedback.innerText = "🎉 ถูกต้องเก่งมาก!";
-        
-        // ลบคำที่ตอบถูกแล้วออกจากรายการ
-        availableWords.shift();
-
-        setTimeout(loadNewQuestion, 1200);
+    if (userInput === currentOriginalWord.toLowerCase()) {
+        resultDiv.style.color = "green";
+        resultDiv.innerText = "🎉 ถูกต้องครับ! (Correct!)";
     } else {
-        feedback.className = "feedback wrong";
-        feedback.innerText = "❌ ยังไม่ถูก ลองใหม่อีกครั้ง!";
-        document.getElementById('user-input').focus();
+        resultDiv.style.color = "red";
+        resultDiv.innerText = `❌ ยังไม่ถูกครับ ลองอีกที! (เฉลย: ${currentOriginalWord})`;
     }
 }
 
-function skipQuestion() {
-    if (availableWords.length <= 1) {
-        const feedback = document.getElementById('feedback-text');
-        feedback.className = "feedback skipped";
-        feedback.innerText = "💡 เหลือคำสุดท้ายแล้ว สู้ๆ ครับ!";
-        return;
-    }
-
-    // ย้ายคำปัจจุบันไปไว้ท้ายสุดของ Array
-    const skippedWord = availableWords.shift();
-    availableWords.push(skippedWord);
-
-    const feedback = document.getElementById('feedback-text');
-    feedback.className = "feedback skipped";
-    feedback.innerText = "⏩ ข้ามคำนี้ไปก่อน!";
-
-    setTimeout(loadNewQuestion, 600);
-}
+// เริ่มต้นเกมคำแรก
+nextQuestion();
 </script>
 
 </body>
